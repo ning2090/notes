@@ -428,10 +428,10 @@ let promise = new Promise((resolve, reject) => {
   
 // 使用.then()的链式调用处理成功的情况，使用.catch()捕获所有错误  
 // then()第一个参数是resolve回调函数，第二个参数是可选的，是reject状态回调
+// then()返回一个新的promise示例，可以采用链式编程
 promise.then(  
   (value) => {  
-    console.log(value);  
-    return anotherAsyncOperation(value); // 返回另一个Promise对象  
+    console.log(value); // '成功的结果'
   }  
 ).then(  
   (newValue) => {  
@@ -442,4 +442,56 @@ promise.then(
     console.error('出错了：', error);  
   }  
 );
+```
+*注意：catch(err=>{})方法等价于then(null,err=>{})
+
+### resolve()和reject()方法
+**概念**：resolve()方法将现有对象转换成Promise对象，该实例的状态为fulfilled。reject()方法返回一个新的Promise实例，该实例的状态为rejected<br>
+**用法**：`let p = Promise.resolve('foo');` 等价于 `let p = new Promise(resolve=>resolve('foo'));`。<br>`let p2 = Promise.reject(new Error('出错了'));` 等价于 `let p2 = new Promise((resolve,reject)=>reject(new Error('出错了)));`
+
+### all()方法
+**概念**：all()方法提供了并行执行异步操作的能力，并且再所有异步操作执行完后才执行回调<br>
+**用法**：
+```js
+let promise1 = new Promise((resolve, reject) => {});
+let promise2 = new Promise((resolve, reject) => {});
+let promise3 = new Promise((resolve, reject) => {});
+
+let p4 = Promise.all([promise1, promise2, promise3])
+
+p4.then(()=>{
+    // 三个都成功 才成功
+}).catch(err=>{
+    // 如果有一个失败 则失败
+})
+```
+
+### race()方法
+**概念**：race()方法给某个异步请求设置超时时间，并且在超时后执行相应的操作<br>
+**用法**：
+```js
+function requestImg(imgSrc){
+    return new Promise((resolve,reject)=>{
+        const img = new Image();
+        img.onload = function(){
+            resolve(img);
+        }
+        img.src = imgSrc;
+    })
+}
+
+function timeout(){
+    return new Promise((resolve,reject)=>{
+        setTimeout(()=>{
+            reject(new Error('图片请求超时'))
+        },3000);
+    })
+}
+
+Promise.race([requestImg('https://...'),timeout()]).then(data=>{
+    console.log(data);
+    document.body.appendChild(data);
+}).catch(err=>{
+    console.log(err);
+})
 ```
