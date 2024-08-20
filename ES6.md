@@ -495,3 +495,125 @@ Promise.race([requestImg('https://...'),timeout()]).then(data=>{
     console.log(err);
 })
 ```
+
+## async异步操作
+**概念**：async是Generator的一个语法糖。凡是在前面添加了async的函数在执行后都会自动返回一个Promise对象<br>
+**作用**：使得异步操作更加方便
+```js
+async function fetchData(url) {
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("error:", error);
+  }
+}
+```
+*注意：如果async函数中有多个await，那么then函数会等待所有await指令运行完的结果，才去执行
+
+## class类
+```js
+class Person {
+  // constructor方法 是类的默认方法,通过new命令生成对象实例时,自动调用该方法,一个类必须有constructor方法,如果没有定义,会被默认添加
+  constructor(name, age) {
+      this.name = name;
+      this.age = age;
+  }
+  //等同于Person.prototype = function sayName(){}
+  sayName(){
+      return this.name;
+  }
+}
+let p1 = new Person('wu',18);
+console.log(p1);// Person {name: "wu", age:18}
+```
+
+### 类的继承
+**概念**：使用关键词extends
+```js
+class Person {
+  constructor(name, age) {
+      this.name = name;
+      this.age = age;
+  }
+  sayName(){
+      return this.name;
+  }
+  sayAge(){
+    return this.age;
+  }
+}
+
+class Boy extends Person{
+  constructor(name,age,height){
+    super(name,age);
+    this.height = height;
+  }
+  // 子类自己的方法
+  sayHeight(){
+    return this.height;
+  }
+  // 重写父类的方法
+  sayName(){
+    return this.name + super.sayAge();
+  }
+}
+
+let b1 = new Boy('yu',18,180);
+console.log(b1.sayHeight);
+```
+
+## Module 模块化
+**概念**：模块功能主要由两个命令构成：*export* 和 *import*。一个模块就是一个独立的文件。
+
+### export
+**概念**：export命令用于规定模块的对外接口
+```js
+//module/index.js
+export const name = 'zhangsan';
+export const age = 18;
+export const sayName = function() {
+    console.log(fristName);
+}
+
+//也可以这样
+const name = 'zhangsan';
+const age = 18;
+const sayName = function() {
+    console.log(fristName);
+}
+export {name,age,sayName}
+```
+
+### import
+**概念**：import命令用于输入其他模块提供的功能
+```js
+import {name,age,sayName} from './modules/index.js';
+// 如果想为输入的变量重新取一个名字，import命令要使用as关键字，将输入的变量重命名
+import * as obj from './modules/index.js';
+```
+
+### export default
+**概念**：使用export default命令为模块指定默认输出
+```js
+export default function(){
+  console.log('foo');
+}
+export default class Person{ ... }
+
+//或者写成
+function foo() {
+  console.log('foo');
+}
+export default foo;
+
+// 在其它模块加载该模块时，import命令可以为该匿名函数指定任意名字
+import customName from './export-default.js'
+customNmae();// foo
+// 如果想在一条import语句中，同时输入默认方法和其他接口，可以写成下面这样
+import customName,{add} from 'export-default.js'
+```
