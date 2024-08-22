@@ -195,4 +195,5 @@ getData()
 | res.status | 返回一个数字，表示HTTP回应的状态码 |
 | res.statusText | 返回状态的文本信息（例如请求成功后服务器返回ok） |
 | res.url | 返回请求的url地址 |
+
 **常见方法**：`res.json()`
