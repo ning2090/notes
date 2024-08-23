@@ -1,10 +1,11 @@
 # url
 **概念**：统一资源定位符，网址，用于访问服务器上资源<br>
-**组成**：http://hmajax.itheima.net/api/province?name=wu&age=18<br>
+**组成**：http://hmajax.itheima.net:80/api/province?name=wu&age=18<br>
 1. http协议：超文本传输协议，规定浏览器和服务器之间传输数据的格式，协议范围http，https等
 2. hmajax.itheima.net域名：标记服务器在互联网中方位
 3. /api/provinc资源路径：标记资源在服务器下的具体位置
-4. ?name=wu&age=18查询参数：浏览器提供给服务器的额外信息
+4. :80端口号：标记服务器里不同功能的服务程序，范围在0-65535之间的任意整数，默认访问80端口
+5. ?name=wu&age=18查询参数：浏览器提供给服务器的额外信息
 
 # 常用请求方法
 **概念**：对服务器资源，要执行的操作
