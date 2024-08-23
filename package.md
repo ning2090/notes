@@ -38,6 +38,8 @@
     - 核心依赖包
 2. 全局包：`npm i 包名 -g` 会被安装到 C:\Users\用户目录\AppData\Roaming\npm\node_modules 目录下，注意只有工具性质的包才有全局安装的必要性，因为它们提供了好用的终端命令，可以通过官网提供的使用说明判断需不需要全局安装。
 
+<img src="https://i-blog.csdnimg.cn/direct/b345504e90e84c02ae4f932bb90220c9.png#pic_center" width="1000px" />
+
 ## i5ting_toc
 **概念**：可以把md文档转为html页面的小工具<br>
 **用法**：
