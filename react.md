@@ -49,7 +49,7 @@ function App () {
     )
 }
 ```
-**条件渲染**：<br>
+**条件渲染**：
 1. 逻辑与运算符 *&&*
 
     `{flag && <span>this is span</span>}`<br>
