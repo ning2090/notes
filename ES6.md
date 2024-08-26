@@ -242,7 +242,7 @@ console.log(obj);// {isShow: true, abc: 123, fbc: f}
     console.log(newObj);// {a: 1, b: 2}
     ```
 ## Symbol类型
-**概念**：原始数据类型Symbol，表示是独一无二的值，用来定义对象的私有变量
+**概念**：原始数据类型Symbol，表示是独一无二的值，用来定义对象的私有变量<br>
 **用法**：
 ```js
 const name = Symbol('name');
