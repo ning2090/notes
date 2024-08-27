@@ -356,3 +356,158 @@ typeof运算符可以返回被检测的数据类型，支持以下两种语法�
         console.log(box.dataset.id);
     </script>
     ```
+
+### 定时器—间歇函数
+1. 开启定时器 `setInterval(函数, 间隔时间)` 函数名不用加括号，间隔时间单位是毫秒，定时器返回的是一个id数字
+2. 关闭定时器
+    ```js
+    let timer = setInterval(function(){
+        console.log('hi');
+    }, 1000)
+    clearInterval(timer)
+    ```
+
+### 事件监听
+**概念**：让程序检测是否有事件产生，一旦有事件触发，就立即调用一个函数做出响应，也成为 *绑定事件* 或 *注册事件*<br>
+**三要素**：
+1. 事件源
+2. 事件类型
+3. 事件调用的函数
+
+**语法**：
+1. 旧版本（L0） `元素对象.on事件 = function(){}`
+2. 新版本（L2） `元素对象.addEventListener('事件类型', 要执行的函数)`
+
+*注意：on方式会覆盖，而且只有冒泡阶段没有捕获，而addEventListener方式可绑定多次，拥有事件更多特性，推荐用新版本的
+
+### 事件类型
+1. 鼠标事件
+    - click 鼠标点击
+    - mouseenter 鼠标经过
+    - mouseleave 鼠标离开
+2. 焦点事件
+    - focus 获得焦点
+    - blur 失去焦点
+3. 键盘事件
+    - keydown 键盘按下触发
+    - keyup 键盘抬起触发
+4. 文本事件
+    - input 用户输入事件
+
+### 事件对象
+**概念**：也是个对象，这个对象里有事件触发的相关信息，例如用户按下了键盘的哪个键<br>
+**获取事件对象**： `元素对象.addEventListener('事件类型', function(e){})` 事件绑定的回调函数的第一个参数就是事件对象，一般命名为event、e<br>
+**常见事件对象属性**： 
+1. type 获取当前的事件类型
+2. clientX/clientY 获取光标相对于浏览器可见窗口左上角的位置
+3. offsetX/offsetY 获取光标相对于当前DOM元素左上角的位置
+4. key 用户按下的键盘键的值
+
+### 环境对象
+**概念**：指的是函数内部特殊的变量this，它代表着当前函数运行时所处的环境。一般谁调用，this就是谁；直接调用函数，相当于是window.函数，所以this指代window
+
+### 回调函数
+**概念**：当函数A做为参数传递给函数B时，称函数A为回调函数
+
+### 事件流
+**概念**：事件完整执行过程中的流动路径。有两个阶段，分别是捕获阶段和冒泡阶段，实际工作都是使用事件冒泡为主
+
+<img src="https://i-blog.csdnimg.cn/direct/3a4c432cc0594fcba4dd921563e69e08.png#pic_center" width="400">
+
+#### 事件捕获
+**概念**：从DOM的根元素开始去执行对应的事件<br>
+**语法**：`DOM.addEventListener('事件类型', 要执行的函数, 是否使用捕获机制)` 第三个参数传入true表示捕获阶段触发（很少使用），默认是false为冒泡阶段触发
+
+#### 事件冒泡
+**概念**：当一个元素的事件被触发时，同样的事件将会在该元素的所有祖先元素中依次被触发。也就是当一个元素触发事件后，会依次向上调用所有父级元素的同名事件（同种类型的事件）。默认存在
+
+#### 阻止冒泡
+1. 阻止事件冒泡 `事件对象.stopPropagation()` 此方法可以阻断时间流动传播，不光在冒泡阶段有效，捕获阶段也有效
+2. 阻止默认行为（链接跳转，表单域跳转）发生 `e.preventDefault()`
+    ```js
+    const form = document.querySelector('form')
+    form.addEventListener('click', function(e){
+        e.preventDefault()
+    })
+    ```
+
+#### 解绑事件
+**语法**：`元素对象.removeEventListener('事件类型', 要执行的函数)` 注意匿名函数无法被解绑
+
+### 事件委托
+**优点**：减少注册次数，提高程序性能<br>
+**原理**：利用事件冒泡特点，给父元素注册事件，当触发子元素时，会冒泡到父元素上，从而触发父元素的事件<br>
+**语法**：`事件对象.target.tagName` 可获得真正触发事件的元素
+```js
+// 例如现在ul内存在li子元素
+const ul = document.querySelector('ul')
+ul.addEventListener('click', function(e){
+    if(e.target.tagName === 'LI'){
+        this.style.color = 'pink'
+    }
+})
+```
+### 页面加载事件
+**概念**：加载外部资源（如图片、外联CSS和js等）加载完毕时触发的事件<br>
+1. 监听页面所有资源加载完毕 `window.addEventListener('load',function(){})` 也可以针对某个资源绑定load事件
+2. 初始HTML文档完全加载和解析完成后，无需等待样式表、图像等完全加载，即监听页面DOM加载完毕 `document.addEventListener('DOMContentLoaded',function(){})`
+
+### 页面滚动事件
+**概念**：滚动条在滚动的时候持续触发的事件<br>
+**语法**：
+1. 监听整个页面滚动 `window.addEventListener('scroll',function(){})` window或document添加scroll事件都行，也能监听某个元素内部滚动事件<br>
+2. 获取滚动位置，有scrollLeft和scrollTop两个属性，获取被卷去的大小，这两个值是可读写的
+    ```js
+    // 例子1
+    div.addEventListener('scroll', function(){
+        // 尽量在scroll事件里获取被卷去的距离
+        console.log(this.scrollTop)
+    })
+
+    // 例子2
+    window.addEventListener('scroll', function(){
+        // document.documentElement 是html元素获取方式
+        const n = document.documentElement.scrollTop
+        // n得到的是数字型，不带单位
+        console.log(n)
+    })
+    ```
+    <img src="https://i-blog.csdnimg.cn/direct/c7ccbdbb26f644c8bff8f9f24a2d946c.png#pic_center" width="400">
+3. 滚动到指定坐标 `元素.scrollTo(x, y)`
+    ```js
+    // 让页面滚动到y轴1000像素的位置
+    window.scrollTo(0, 1000)
+    ```
+
+### 页面尺寸事件
+**语法**：
+1. 窗口尺寸改变时触发事件 `window.addEventListener('resize', function(){})`
+2. 检测屏幕宽度
+    ```js
+    window.addEventListener('resize', function(){
+        let w = document.documentElement.clientWidth
+        console.log(w)
+    })
+    ```
+3. 获取元素宽高（不包含边框、margin、滚动条等）：`clientWidth`和`clientHeight` `元素.clientWidth`<br>
+    <img src="https://i-blog.csdnimg.cn/direct/9b6175a7c7d949ec9c8d0129988bf1f6.png#pic_center" width="400">
+
+### 元素尺寸与位置
+1. 获取宽高（包含自身设置的宽高、padding、border）：`offsetWidth`和`offsetHeight` 获取的是数值，注意若盒子是隐藏的，结果是0 `元素.offsetWidth`
+2. 获取位置：获取元素距离自己最近一级带有定位父级元素的左、上距离 `offsetLeft`和`offsetTop`是只读属性 `元素.offsetLeft`
+
+### 日期对象
+**方法**：
+| 方法     | 作用     |说明     |
+| -------- | -------- |-------- |
+|getFullYear()| 获得年份 |获取四位年份 |
+|getMonth()| 获得月份 |取值为0-11 |
+|getDate()| 获取月份中的每一天 |不同月份取值也不相同 |
+|getDay()| 获取星期 |取值为0-6 |
+|getHours()| 获取小时 |取值为0-23 |
+|getMinutes()| 获取分钟 |取值为0-59 |
+|getSeconds()| 获取秒 |取值为0-59 |
+
+**用法**：
+1. 获取当前时间 `const data = new Data()` 用new关键词实例化一个日期对象
+2. 获得指定时间 `const data = new Data('2008-8-8')`
