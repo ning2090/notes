@@ -511,3 +511,60 @@ ul.addEventListener('click', function(e){
 **用法**：
 1. 获取当前时间 `const data = new Data()` 用new关键词实例化一个日期对象
 2. 获得指定时间 `const data = new Data('2008-8-8')`
+
+#### 时间戳
+**概念**：指的是1970年01月01日00时00分00秒起至现在的毫秒数<br>
+**获取方法**：
+1. 使用getTime()方法
+    ```js
+    const date = new Date()
+    console.log(date.getDate())
+    ```
+2. 简写 `console.log(+new Date())`
+3. 使用Date.now() `console.log(Date.now())` 但是只能得到当前的时间戳，而前面两种可以返回指定时间的时间戳
+
+### DOM节点
+**概念**：DOM树里每一个内容都称为节点<br>
+**节点类型**：
+- 元素节点（所有的标签，比如body、div，其中html是根节点）
+- 属性节点（所有的属性，比如class属性）
+- 文本节点（所有的文本，比如标签里的文字）
+- 其他
+
+**节点关系**：
+- 父节点
+- 子节点
+- 兄弟节点
+
+**查找节点**：
+- 父节点查找 `子元素.parentNode` 返回最近一级的父节点，找不到返回null
+- 子节点查找 
+    - `父元素.childNodes` 获得所有子节点，包括文本节点（空格、换行）、注释节点等
+    - `父元素.children` 仅获得所有元素节点，返回的还是一个伪数组
+- 兄弟关系查找
+    - 下一个兄弟节点 `nextElementSibling`属性
+    - 上一个兄弟节点 `previousElementSibling`属性
+
+**新增节点**：
+- 创建节点 `document.createElement('标签名')`
+- 追加节点
+    - 插入到父元素的最后一个子元素 `父元素.appendChild(要插入的元素)`
+    - 插入到父元素中某个子元素的前面 `父元素.insertBefore(要插入的元素, 在哪个元素前面)`
+    ```js
+    const ul = document.querySelector('ul')
+    const li = document.createElement('li')
+    li.innerHTML = 'li'
+    ul.insertBefore(li, ul.children[0])
+    ```
+- 克隆节点 `元素.cloneNode(布尔值)` true则代表克隆会包含后代节点，false代表克隆不包含后代节点，默认为false
+
+**删除节点**：`父元素.removeChild(要删除的元素)` 若不存在父子关系则删除不成功
+
+### 移动端事件
+| 触屏touch事件     | 说明     |
+| -------- | -------- |
+| touchstart| 手指触摸到一个DOM元素时触发 |
+| touchmove| 手指在一个DOM元素上滑动时触发 |
+| touchend| 手指从一个DOM元素上移开时触发 |
+
+Swiper插件常用于移动端网站的内容触摸滑动
