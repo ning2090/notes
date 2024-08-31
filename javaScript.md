@@ -830,3 +830,148 @@ var bar = function(){
     console.log('函数提升')
 }
 ```
+
+### 函数参数
+1. 动态参数
+    - arguments是函数内部内置的伪数组变量，包含了调用函数时传入的所有实参。作用是动态获取函数的实参。只存在于函数中
+        ```js
+        function sum(){
+            console.log(arguments) 
+            let sum = 0
+            for(let i = 0; i < arguments.length; i++){
+                sum += arguments[i]
+            }
+            console.log(sum)
+        }
+        sum(1, 2, 3)
+        ```
+2. 剩余参数（提倡）：允许将一个不定数量的参数表示成一个数组。...置于最末函数形参之前，用于获取多余的实参，借助...获取的剩余实参，是个真数组
+    ```js
+    function sum(one, ...other){
+        console.log(one)// 得到1
+        console.log(other) // 得到[2,3]
+    }
+    sum(1, 2, 3)
+    ```
+
+### 展开运算符...
+**概念**：将一个数组进行展开<br>
+**典型运用场景**：
+- 求数组最大值或最小值
+    ```js
+    const arr = [1, 2, 3]
+    console.log(Math.max(...arr)) // 3
+    console.log(Math.min(...arr)) // 1
+    ```
+- 合并数组
+    ```js
+    const arr1 = [1, 2, 3]
+    const arr2 = [4, 5, 6]
+    const arr3 = [...arr1, ...arr2]
+    console.log(arr3)// [1,2,3,4,5,6]
+    ```
+
+### 箭头函数
+**作用**：更简短的函数写法并且不绑定this。适用于那些本来需要匿名函数的地方。属于表达式函数，因此不存在函数提升<br>
+**语法**：
+- 语法1
+    ```js
+    const fn = () => {
+        console.log('箭头函数')
+    }
+    fn()
+    ```
+- 语法2：只有一个参数可省略小括号
+    ```js
+    const fn = x => {
+        return x + x
+    }
+    console.log(fn(1))// 2
+    ```
+- 语法3：若函数体只有一行代码，可以写到一行上，无需写return直接返回值
+    ```js
+    const fn = (x, y) => x + y
+    console.log(fn(1, 2))// 3
+    ```
+- 语法4：加括号的函数体返回对象字面量表达式
+    ```js
+    const fn = uname => ({uname: uname})
+    console.log(fn('wu'))// { uname: 'wu' }
+    ```
+
+**箭头函数参数**：没有arguments动态参数，但是有剩余参数...args
+```js
+const sum = (...args) => {
+    let sum = 0
+    for(let i = 0; i < args.length; i++){
+        sum += args[i]
+    }
+    return sum
+}
+console.log(sum(1,2,3))// 6
+```
+**箭头函数this**：箭头函数不会创建自己的this，它只会从自己的作用域链的上一层沿用this
+```js
+console.log(this)// 指向window
+const say = () => {
+    console.log(this)// 指向window
+}
+btn.addEventListener('click', () => {
+    console.log(this)// 指向window
+})
+
+const user = {
+    name: 'wu',
+    walk: () => {
+        console.log(this)// 指向window
+    }
+}
+user.walk()
+```
+*注意：事件回调函数使用箭头函数时，this为全局的window，因此DOM事件回调函数为了简便，还是不太推荐使用箭头函数
+
+### 数组解构
+**概念**：将数组的单元值快速批量赋值给一系列变量的简洁语法<br>
+**语法**：
+1. 赋值运算符 = 左侧的[]用于批量声明变量，右侧数组的单元值将被赋值给左侧的变量
+    ```js
+    const arr = [1,2,3]
+    const [a,b,c] = arr
+    console.log(a)// 1
+    console.log(b)// 2
+    console.log(c)// 3
+    ```
+2. 变量的顺序对应数组单元值的位置依次进行赋值操作。若单元值少，变量多的情况，则多出的变量为undefined；若单元值多，变量少的情况，可以用剩余参数解决
+    ```js
+    // 1 2 3是单元值
+    const [a,b,c] = [1,2,3]
+    console.log(a)// 1
+    console.log(b)// 2
+    console.log(c)// 3
+
+    // 按需导入，忽略某些返回值
+    const [a, ,c,d] = [1,2,3,4]
+    console.log(a)// 1
+    console.log(c)// 3
+    console.log(d)// 4
+
+    // 支持多维数组
+    const [a,b] = ['苹果',['小米','华为']]
+    console.log(a)// 苹果
+    console.log(b)// ['小米','华为']
+
+    const [a,[b,c]] = ['苹果',['小米','华为']]
+    console.log(a)// 苹果
+    console.log(b)// 小米
+    console.log(c)// 华为
+    ```
+*注意：为了防止有undefined传递单元值的情况，可以设置默认值
+
+**典型应用**：交换两个变量
+```js
+let a = 1
+let b = 3; //这里必须有分号
+[b,a] = [a,b]
+console.log(a)// 3
+console.log(b)// 1
+```
