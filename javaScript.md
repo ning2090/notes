@@ -1047,3 +1047,115 @@ console.log(b)// 1
     const {name, family:{mother, father}} = user
     console.log(name, mother, father)
     ```
+
+### 实例成员
+**概念**：通过构造函数创建的对象称为实例对象，实例对象中的属性和方法称为实例成员（实例属性和实例方法）<br>
+**语法**：
+```js
+function Person(){
+    // 构造函数内部的this就是实例对象
+    // 实例对象中动态添加属性
+    this.name = '小明'
+    // 实例对象动态添加方法
+    this.sayHi = function(){
+        console.log('你好')
+    }
+}
+// 实例化，p1是实例对象
+const p1 = new Person()
+console.log(p1)
+console.log(p1.name) // 访问示例属性
+p1.sayHi() // 调用示例方法
+```
+*注意：为构造函数传入参数，创建结构相同但值不同的对象；构造函数创建的实例对象彼此独立互不影响
+
+### 静态成员
+**概念**：构造函数的属性和方法称为静态成员（静态属性和静态方法），如Data.now()、Math.PI、Math.random()<br>
+**语法**：
+```js
+function Person(name, age){
+    // 省略实例成员
+}
+// 静态属性
+Person.eyes = 2
+// 静态方法
+Person.walk = function(){
+    console.log('走路')
+    // this指向Person
+    console.log(this.eyes)
+}
+```
+*注意：静态成员只能构造函数来访问；静态方法中的this指向构造函数
+
+### 内置构造函数
+**概念**：字符串、数值、布尔等基本类型也有专门的构造函数，这些我们称为包装类型。JS中几乎所有的数据都可以基于构造函数创建
+```js
+const str = 'pink'
+// js底层完成，把简单数据类型包装成引用数据类型，相当于const str = new String('pink')
+console.log(str.length)
+```
+**分类**：
+- 引用类型
+    - Object：创建普通对象
+        - Object.keys静态方法获取对象中所有属性（键），返回一个数组
+            ```js
+            const o = {name:'wu', age:18}
+            // 获取对象的所有键，并返回的是一个数组
+            const arr = Object.keys(o)
+            console.log(arr) // ['name', 'age']
+            ```
+        - Object.values静态方法获取对象中所有属性值，返回一个数组
+        - Object.assign静态方法用于对象拷贝
+            ```js
+            // 场景1：把o拷贝给obj
+            const o = {name:'wu', age:18}
+            const obj = {}
+            Object.assign(obj, o)
+            console.log(obj) // {name:'wu', age:18}
+
+            // 场景2(常用)：给对象添加属性
+            const o = {name:'wu', age:18}
+            Object.assign(o, {gender:'女'})
+            console.log(obj) // {name:'wu', age:18, gender:'女'}
+            ```
+    - Array：创建数组
+        - forEach遍历数组，不返回数组，常用于查找遍历数组元素
+        - filter过滤数组，返回新数组，返回筛选满足条件的数组元素
+        - map迭代数组，返回新数组，返回处理后的数组元素
+        - reduce累计器，返回累计处理的结果，常用于求和等 `arr.reduce(function(上一次值,当前值){}, 起始值)` 初始值可选
+            ```js
+            const arr = [1, 2, 3]
+            // reduce执行过程：若无初始值，则上一次值以数组的第一个元素的值，每一次循环，把返回值给作为下一次循环的上一次值；若有初始值，则起始值作为上一次值
+            const total = arr.reduce((prev, current) => prev + current, 10)
+            console.log(total) // 16
+            ```
+        - join将数组元素拼接为字符串，返回字符串
+        - find查找元素，返回符合条件的第一个数组元素值，若没有符合条件的则返回undefined
+            ```js
+            const arr = [
+                {
+                    name:'小米',
+                    price:1999
+                },
+                {
+                    name:'华为',
+                    price:3999
+                },
+            ]
+            const mi = arr.find(item => item.name === '小米')
+            console.log(mi) // {name:'小米', price:1999}
+            ```
+        - every检测数组所有元素是否都符合指定条件，若都通过返回true，否则返回false
+            ```js
+            const arr = [10, 20]
+            const flag = arr.every(item => item >= 10)
+            console.log(flag) // true
+            ```
+        - some检测数组中的元素是否符合指定条件，若数组中有元素符合就返回true，否则返回false
+        - concat合并两个数组，返回生成的新数组
+        - sort对原数组单元值排序
+        - splice删除或替换原数组单元
+        - reverse反转数组
+        - findIndex查找元素的索引值
+    - RegExp，Data等
+- 包装类型：String，Number，Boolean等 
