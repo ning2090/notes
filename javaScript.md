@@ -1158,4 +1158,57 @@ console.log(str.length)
         - reverse反转数组
         - findIndex查找元素的索引值
     - RegExp，Data等
-- 包装类型：String，Number，Boolean等 
+- 包装类型
+    - String：创建字符串
+        - length用来获取字符串长度
+        - split用来将字符串拆分成数组 `split('分隔符')`
+            ```js
+            const str = 'pink,red'
+            const arr = str.split(',')
+            console.log(arr) // ['pink','red']
+            ```
+        - substring用于字符串截取 `substring(需要截取的第一个字符的索引[,结束的索引号])`
+            ```js
+            const str = '你好呀'
+            // 若省略结束的索引号，默认取到最后；结束的索引号不包含想要截取的部分
+            console.log(str.substring(1, 2)) // 好
+            ```
+        - startsWith检测是否以某字符开头 `startsWith(检测字符串[,检测位置索引号])`
+            ```js
+            const str = '你好呀'
+            console.log(str.startsWith('你')) // true
+            ```
+        - includes判断一个字符串是否包含在另一个字符串中，根据情况返回true或false `includes(搜索的字符串[,检测位置索引号])`
+            ```js
+            const str = '你好呀'
+            console.log(str.includes('好')) // true
+            ```
+        - toUpperCase用于将字母转换成大写
+        - toLowerCase用于将字母转换成小写
+        - indexOf检测是否包含某字符
+        - endsWith检测是否以某字符结束
+        - replace用于替换字符串，支持正则匹配
+        - match用于查找字符串，支持正则匹配
+    - Number：创建数值
+        - toFixed设置保留小数位的长度
+            ```js
+            const price = 12.345
+            // 保留两位小数，四舍五入
+            console.log(price.toFixed(2)) // 12.35
+            ```
+    - Boolean等
+
+**构造函数**：js面向对象可以通过构造函数实现封装，但存在浪费内存的问题<br>
+<img src="https://i-blog.csdnimg.cn/direct/d6120b1717134ce1a1d09172817de950.png#pic_center" width="800">
+
+### 编程思想
+1. **面向过程编程（POP）**：面向过程就是按照分析好的步骤解决问题
+- 优点：性能比面向对象高，适合跟硬件联系很紧密的东西，例如单片机就采用的面向对象编程
+- 缺点：没有面向对象易维护、易复用、易扩展
+2. **面向对象编程（OOP）**：面向对象就是以对象功能来划分问题，而不是步骤。每一个对象都是功能中心，具有明确分工
+- 优点：易维护、易复用、易扩展，由于面向对象有 *封装性*、*继承性*、*多态性* 的特性，可以设计出低耦合的系统，使系统更加灵活、更加易于维护<br>
+<img src="https://i-blog.csdnimg.cn/direct/5e93488f622e4d55a725390de9bcfb9a.png#pic_center" width="450">
+- 缺点：性能比面向过程低
+
+### 原型
+**目标**：利用原型对象实现方法共享，也就是解决构造函数存在浪费内存的问题
