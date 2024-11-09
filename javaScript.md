@@ -1211,4 +1211,90 @@ console.log(str.length)
 - 缺点：性能比面向过程低
 
 ### 原型
-**目标**：利用原型对象实现方法共享，也就是解决构造函数存在浪费内存的问题
+**目标**：利用原型对象实现方法共享，也就是解决构造函数存在浪费内存的问题<br>
+**概念**：
+- 构造函数通过原型分配的函数是所有对象所共享的
+- js中规定，每一个构造函数都有一个prototype属性，指向另一个对象，所以我们也称为原型对象
+- 这个对象可以挂载函数，对象实例化不会多次创建原型上函数，节约内存
+- 可以把那些不变的方法，直接定义在prototype对象上，这样所有对象的实例就可以共享这些方法
+- 构造函数和原型对象中的this都指向实例化的对象
+
+**语法**：
+```js
+// 1.公共的属性写到构造函数内
+function Star(uname, age){
+    this.uname = uname
+    this.age = age
+}
+// 2.公共的方法写到原型对象身上
+Star.prototype.sing = function(){
+    console.log('唱歌')
+}
+const ldh = new Star('刘德华', 55)
+const zxy = new Star('张学友', 58)
+ldh.sing() // 唱歌
+zxy.sing() // 唱歌
+console.log(ldh.sing === zxy.sing) // true
+```
+<img src="https://i-blog.csdnimg.cn/direct/577ca985b8614531b8b96a94f7807dc8.png#pic_center" width="550">
+
+#### constructor属性
+**概念**：每个原型对象里都有个constructor属性，该属性指向该原型对象的构造函数
+
+<img src="https://i-blog.csdnimg.cn/direct/d3f97ec2d6e941d6ac0506e1f9bca009.png#pic_center" width="600">
+
+**使用场景**：若有多个对象的方法，可以给原型对象采取对象形式赋值，但这样会覆盖构造函数原型对象原来的内容，此时我们可在修改后的原型对象中，添加一个constructor指向原来的构造函数
+
+<img src="https://i-blog.csdnimg.cn/direct/343105153d414528bd0367621c475305.png#pic_center" width="1000">
+
+**存在**：*prototype原型* 和 *对象原型__proto__* 里都有
+
+#### __proto__属性
+**概念**：对象都有一个属性__proto__指向构造函数的prototype原型对象，因为有了这个的存在，所以对象可以使用构造函数prototype原型对象的属性和方法
+
+<img src="https://i-blog.csdnimg.cn/direct/a16d4ccd2846490b876c3a51efcbdf44.png#pic_center" width="600">
+
+*注意：
+- __proto__是JS非标准属性
+- [[prototype]]和__proto__意义相同
+- 用来表明当前实例对象指向哪个原型对象prototype
+- __proto__对象原型里面也有一个constructor属性，指向创建该实例对象的构造函数
+
+#### 原型继承
+**概念**：继承是面向对象编程的另一个特征，通过继承进一步提升代码封装的程度，JS中大多是借助原型对象实现继承<br>
+**语法**：
+```js
+function Person(){
+    this.eyes = 2
+}
+function Woman(){}
+// Woman通过原型来继承Person。若Woman.prototype = Person会导致修改Woman.prototype时会直接修改Person
+Woman.prototype = new Person()
+// 指回原来的构造函数
+Woman.prototype.constructor = Woman
+```
+
+#### 原型链
+**概念**：基于原型对象的继承使得不同构造函数的原型对象关联在一起，并且这种关联的关系是一种链状的结构，我们将原型对象的链状结构关系称为原型链
+
+<img src="https://i-blog.csdnimg.cn/direct/5daa5f628b4e431d9ddf40f5bf8354a0.png#pic_center" width="800">
+
+**查找规则**：
+1. 当访问一个对象的属性（包括方法）时，首先查找这个对象自身有没有该属性
+2. 如果没有就查找它的原型（也就是__proto__指向的prototype原型对象）
+3. 如果还没有就查找原型对象的原型（Object的原型对象）
+4. 依次类推一直找到Object为止（null）
+
+```js
+function Person(){
+    this.eyes = 2
+}
+const ldh = new Person()
+console.log(ldh.__proto__ === Person.prototype) //true
+console.log(Person.prototype.__proto__ === Object.prototype) //true
+// 可以使用instanceof运算符用于检测构造函数的prototype属性是否出现在某个实例对象的原型链上
+console.log(ldh instanceof Person) // true
+console.log(ldh instanceof Object) // true
+```
+
+*注意： __proto__对象原型的意义就在于为对象成员查找机制提供一个方向，或者说一条路线
