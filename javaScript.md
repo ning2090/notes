@@ -1298,3 +1298,124 @@ console.log(ldh instanceof Object) // true
 ```
 
 *注意： __proto__对象原型的意义就在于为对象成员查找机制提供一个方向，或者说一条路线
+
+### 浅拷贝
+**概念**：简单数据类型拷贝值，引用数据类型拷贝的是地址<br>
+**常见方法**：
+1. 拷贝对象：Object.assign() 或者 用展开运算符{...obj}
+    ```js
+    const obj = {
+        age: 18
+    }
+    // 若是直接赋值o = obj，修改age会修改obj，因为直接拷贝对象栈里面的地址
+    // 若obj中还有方法，以下两种方法修改方法会影响obj
+    // 方法1：Object.assign()
+    const o = {}
+    Object.assign(o, obj)
+    console.log(o) // {age:18}
+
+    // 方法2：展开运算符{...obj}
+    const o = {...obj}
+    console.log(o) // {age:18}
+    o.age = 20
+    console.log(o) // {age:20}
+    console.log(obj) // {age:18}
+    ```
+2. 拷贝数组：Array.prototype.concat() 或者 [...arr]
+
+### 深拷贝
+**概念**：拷贝的是对象，不是地址<br>
+**常见方法**：
+1. 通过递归实现深拷贝：函数内部自己调用自己，这个函数就是递归函数。递归函数的作用和循环效果类似。由于递归易发生“栈溢出”（stack overflow）错误，所以必须加退出条件return
+    ```js
+    const obj = {
+        uname:'pink',
+        age:18,
+        hobby:['乒乓球', '足球'],
+        family:{
+            baby:'小pink'
+        }
+    }
+    const o = {}
+    function deepCopy(newObj, oldObj){
+        for(let k in oldObj){
+            // 这里一定要注意先判断是否是数组再判断是否是对象，因为数组也属于对象，[1,2] instanceof Object会返回true
+            if(oldObj[k] instanceof Array){
+                newObj[k] = []
+                deepCopy(newObj[k], oldObj[k])
+            }else if(oldObj[k] instanceof Object){
+                newObj[k] = {}
+                deepCopy(newObj[k], oldObj[k])
+            }else{
+                // k是属性名，oldObj[k]是属性值
+                // newObj[k] === o.uname 给新对象添加属性
+                newObj[k] = oldObj[k]
+            }
+        }
+    }
+    deepCopy(o, obj)
+    ```
+2. js库lodash里的cloneDeep内部实现了深拷贝：_.cloneDeep(要被克隆的对象)
+    ```js
+    const obj = {
+        uname:'pink',
+        age:18,
+        hobby:['乒乓球', '足球'],
+        family:{
+            baby:'小pink'
+        }
+    }
+    const o = _.cloneDeep(obj)
+    ```
+3. 通过JSON.stringify()实现
+    ```js
+    const obj = {
+        uname:'pink',
+        age:18,
+        hobby:['乒乓球', '足球'],
+        family:{
+            baby:'小pink'
+        }
+    }
+    // 先把对象转换成JSON字符串再用parse解析成js对象或值
+    const o = JSON.parse(JSON.stringify(obj))
+    ```
+
+### 异常处理
+**概念**：异常处理是指预估代码执行过程中可能发生的错误，然后最大程度的避免错误的发生导致整个程序无法继续运行<br>
+**常见方法**：
+1. throw抛异常
+    ```js
+    function counter(x, y){
+        if(!x || !y){
+            // throw抛出异常信息，程序也会终止执行
+            // Error对象配合throw使用，能够设置更详细的错误信息
+            throw new Error('参数不能为空')
+        }
+        return x + y
+    }
+    counter()
+    ```
+2. try/catch捕获异常
+    ```js
+    function foo(){
+        try{
+            // 可能出错的代码写到try内
+            const p = document.querySelector('.p')
+            p.style.color = 'red'
+        }catch(err){
+            // try代码中出现错误，会执行catch代码段，并截获到错误信息，但是不终止程序继续执行
+            console.log(err.message)
+            // 中断程序需要加return,或者配合throw使用，两种选择一个即可
+            throw new Error('参数不能为空')
+            // return
+        }
+        finally{
+            // finally不管是否有错误，都会执行
+            alert('执行')
+        }
+        console.log('若出现错误，该语句不会执行') 
+    }
+    foo()
+    ```
+3. debugger
