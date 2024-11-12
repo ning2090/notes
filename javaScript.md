@@ -1419,3 +1419,193 @@ console.log(ldh instanceof Object) // true
     foo()
     ```
 3. debugger
+
+### 处理this
+**this指向**：
+- 普通函数：普通函数的调用方式决定了this的值，即谁调用this的值就指向谁。普通函数没有明确调用者时this值为window，严格模式下（'use strict'）没有调用者时this的值为undefined
+    ```js
+    // 情形1
+    console.log(this) // window
+
+    // 情形2
+    function fn(){
+        console.log(this) // window
+    }
+    fn()
+
+    // 情形3
+    setTimeout(function(){
+        console.log(this) // window
+    }, 1000)
+
+    // 情形4
+    document.querySelector('button').addEventListener('click', function(){
+        console.log(this) // button
+    })
+
+    // 情形5
+    const obj = {
+        sayHi:function(){
+            console.log(this) // obj
+        }
+    }
+    obj.sayHi()
+    ```
+- 箭头函数：箭头函数中不存在this，沿用上一级的，向外层作用域中，一层一层查找this，直到有this的定义
+    ```js
+    // 情形1
+    const sayHi = function(){
+        console.log(this) // window
+    }
+
+    // 情形2
+    const obj = {
+        sayHi:() => {
+            console.log(this) // window
+        }
+    }
+
+    // 情形3：dom事件函数
+    document.querySelector('button').addEventListener('click', function(){
+        console.log(this) // window
+    })
+
+    // 情形4：原型函数
+    function Person(){}
+    Person.prototype.walk = () => {
+        console.log(this) // window
+    }
+    const p1 = new Person()
+    p1.walk()
+    ```
+**改变this指向**：
+- function.call(thisArg, arg1, arg2, ...)：其中thisArg指的是在function函数运行时指定的this值。返回值就是函数的返回值，因为它就是调用函数（了解）
+    ```js
+    const obj = {
+        uname:'pink'
+    }
+    function fn(x, y){
+        console.log(this) 
+        console.log(x + y)
+    }
+    fn.call(obj, 1, 2) // this指向obj 且 输出3
+    ```
+- function.apply(thisArg,[argsArray])：其中thisArg指的是在function函数运行时指定的this值。argsArray是传递的值，必须包含在数组里面。返回值就是函数的返回值，因为它就是调用函数
+    ```js
+    const obj = {
+        uname:'pink'
+    }
+    function fn(x, y){
+        console.log(this) 
+        console.log(x + y)
+    }
+    fn.apply(obj, [1, 2]) // this指向obj 且 输出3
+
+    // 使用场景：求数组最大值( 另一种方法是 Math.max(...arr) )
+    const arr = [100, 33, 3]
+    const max = Math.max.apply(Math, arr)
+    console.log(max) // 100
+    ```
+- function.bind(thisArg, arg1, arg2, ...)：该方法不会调用函数。其中thisArg指的是在function函数运行时指定的this值。返回由指定的this值和初始化参数改造的原函数拷贝（新函数）
+    ```js
+    const obj = {
+        uname:'pink'
+    }
+    function fn(){
+        console.log(this) 
+    }
+    const fun = fn.bind(obj)
+    // 调用利用bind创建的新函数fun，其构造与fn一样
+    fun() // {uname:'pink'}
+
+    // 使用场景：有一个按钮，点击后就禁用，2秒后开启
+    document.querySelector('button').addEventListener('click', function(){
+        this.disabled = true // 这里的this指向button
+        window.setTimeout(function(){
+            // bind将this由原来的window 改为 button
+            this.disabled = false
+        }.bind(this), 2000)
+    })
+    ```
+**改变this指向的三种方法总结**：
+- 相同点：都改变this指向
+- 区别点：call和apply会调用函数，而bind不会调用函数。call和apply传递参数不同，apply传递必须是数组形式
+
+### 性能优化
+#### 防抖（debounce）
+**概念**：单位时间内，频繁触发事件，只执行最后一次
+
+<img src="https://i-blog.csdnimg.cn/direct/b38b846092f84e3ca31ac30b6a59991c.png#pic_center" width="390">
+
+**使用场景**：
+1. 搜索框只需在用户最后一次输入完再发送请求
+2. 手机号、邮箱验证输入检测
+
+**实现方式**：
+1. lodash提供的防抖处理：_.debounce(function, time) 注意这里time是毫秒
+    ```js
+    // 需求：页面一个盒子，里面有数字，实现鼠标在盒子内移动，鼠标停止500ms后，数字+1
+    const box = document.querySelector('.box')
+    let i = 1
+    function mouseMove(){
+        box.innerHTML = i++
+        // 若存在开销较大操作，大量数据处理，大量dom操作，可能会卡
+    }
+    box.addEventListener('mousemove', _.debounce(mouseMove, 500))
+    ```
+2. 手写一个防抖函数处理：核心是利用setTimerout定时器来实现
+    ```js
+    function debounce(fn, t){
+        // 1. 声明定时器变量
+        let timer
+        // return返回一个匿名函数
+        return function(){
+            // 2. 每次事件触发的时候先判断是否有定时器，如果有先清除以前的定时器
+            if(timer) clearTimeout(timer)
+            // 3. 如果没有定时器，则开启定时器，存入到定时器变量里面
+            timer = setTimeout(function(){
+                fn()
+            }, t)
+        }
+    }
+    box.addEventListener('mousemove', debounce(mouseMove, 500))
+    ```
+
+#### 节流（throttle）
+**概念**：单位时间内，频繁触发事件，只执行一次
+
+<img src="https://i-blog.csdnimg.cn/direct/8121dce3e79f470d9ed668818b7cea67.png#pic_center" width="390">
+
+**使用场景**：高频事件如鼠标移动mousemove、页面尺寸缩放resize、滚动条滚动scroll 等<br>
+**实现方式**：
+1. lodash提供的节流函数处理：_.throttle(function, time) 注意这里time是毫秒
+    ```js
+    // 需求：页面一个盒子，里面有数字，实现鼠标在盒子内移动，不管移动多少次，每隔500ms数字才+1
+    const box = document.querySelector('.box')
+    let i = 1
+    function mouseMove(){
+        box.innerHTML = i++
+        // 若存在开销较大操作，大量数据处理，大量dom操作，可能会卡
+    }
+    box.addEventListener('mousemove', _.throttle(mouseMove, 500))
+    ```
+2. 手写一个节流函数处理：核心是利用setTimerout定时器来实现
+    ```js
+    function throttle(fn, t){
+        // 1. 声明定时器变量
+        let timer = null
+        // return返回一个匿名函数
+        return function(){
+            // 2. 每次事件触发的时候先判断是否有定时器，如果有定时器则不开启新定时器
+            // 3. 如果没有定时器则开启定时器
+            if(!timer){
+                timer = setTimeout(function(){
+                    fn()
+                    // 清除定时器。不用clearTimeout(timer)是因为setTimeout中定时器还在运作无法删除
+                    timer = null
+                }, t)
+            }
+        }
+    }
+    box.addEventListener('mousemove', throttle(mouseMove, 500))
+    ```
