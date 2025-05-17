@@ -30,7 +30,7 @@
 **用法**：用反引号把结构包裹起来，变量处用`${变量名}`
 ```js
 const oBox = document.querySelector('.box');
-let id = 1, name = '小马哥';
+let id = 1, name = 'wjn';
 //传统写法
 let htmlTel = "<ul><li><p>id:" + id + "</p><p>name:" + name + "</p></li></ul>";
 //ES6写法
@@ -267,7 +267,7 @@ console.log(m[0]);// Symbol(name)
 *注意点：对象中定义的是Symbol的话就没有遍历
 
 ## Set集合数据类型
-**概念**：表示无重复值得有序列表<br>
+**概念**：表示无重复值的有序列表<br>
 **用法**：
 ```js
 let set = new Set();
@@ -617,3 +617,7 @@ customNmae();// foo
 // 如果想在一条import语句中，同时输入默认方法和其他接口，可以写成下面这样
 import customName,{add} from 'export-default.js'
 ```
+
+*注意：
+- export：用于命名导出，允许导出多个变量、函数或类，导入必须使用解构语法匹配名称
+- export default：用于默认导出，每个模块只能有一个默认导出，导入时可以自定义名称

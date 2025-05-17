@@ -105,6 +105,7 @@ module.exports = {
 **需求**：
 - 开发模式：style-loader内嵌css代码在js中，让热替换更快
 - 生产模式：提取css代码，让浏览器缓存和并行下载js和css文件
+
 **方法**：
 - 方法1：webpack.config.js配置导出函数，但是局限性大（只接受两种模式）
 - 方法2：借助cross-env（跨平台通用）包名令，设置参数区分环境

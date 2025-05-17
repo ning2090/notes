@@ -106,25 +106,27 @@ text-align本质是控制内容的对齐方式，属性要设置给内容的父�
 |属性值|效果|
 |--|--|
 |block|块级|
-|inline-block|行内块|
 |inline|行内|
+|inline-block|行内块|
+|none|元素隐藏 (不占空间，DOM仍存在)|
 
 ## 盒子模型
-- 内容区域 width & height
-- 内边距 padding / padding-方位名词
+**组成部分**：
+1. **内容区域** width & height
+2. **内边距** padding / padding-方位名词
     |padding多值个数|示例|含义|
     |--|--|--|
     |一个值|`padding:10px`|四个方向均为10px|
     |两个值|`padding:10px 20px`|上下10px，左右20px|
     |三个值|`padding:10px 20px 30px`|上10px，左右20px，下30px|
     |四个值|`padding:10px 20px 30px 40px`|上10px 右20px 下30px 左40px|
-- 边框线 border：边框线粗细 线条样式 颜色（不区分顺序）<br> *单方向边框线* ：border-方位名词：边框线粗细 线条样式 颜色（不区分顺序）
+3. **边框线** border：边框线粗细 线条样式 颜色（不区分顺序）<br> *单方向边框线* ：border-方位名词：边框线粗细 线条样式 颜色（不区分顺序）
     |线条样式属性值|效果|
     |--|--|
     |solid|实线|
     |dashed|虚线|
     |dotted|点线|
-- 外边距 margin / margin-方位名词<br> *版心居中*：`margin:0 auto` 盒子要有宽度
+4. **外边距** margin / margin-方位名词<br> *版心居中*：`margin:0 auto` 盒子要有宽度
 
 **盒子尺寸 = 内容尺寸 + border尺寸 + 内边距尺寸**
 
@@ -291,7 +293,7 @@ img {
 ## 垂直对齐方式
 **属性名**：vertical-align (给图片加这个属性)<br>
 **使用场景**：图片和文字对齐<br>
-**问题描述**：浏览器把行内块、行内标签当文字处理，默认按基线对齐，导致图片底下有空白，转块级`display:block;` 或 使用vertical-align 就可解决<br>
+**问题描述**：浏览器把行内块、行内标签当文字处理，默认按基线对齐，导致图片底下有空白，转块级 `display:block;` 或 使用 `vertical-align:middle;` 就可解决<br>
 **属性值**：
 |属性值|效果|
 |--|--|

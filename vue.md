@@ -17,6 +17,10 @@
 ## 项目目录结构
 <img src="https://i-blog.csdnimg.cn/direct/8b5ee31f64284024985d6555129e93d0.png#pic_center" width="350">
 
+- `main.js`：项目的JavaScript入口，初始化Vue实例并挂载到DOM
+- `App.vue` ：根组件文件，承载整个应用的组件结构和公共布局
+- `index.html`：静态页面模板，提供Vue挂载的DOM容器节点（如`<div id="app">`）
+
 ## 模板语法
 **概念**：Vue使用一种基于HTML的模板语法，使我们能够声明式地将其组件实例的数据绑定到呈现的DOM上。所有的Vue模板都是语法层面合法的HTML，可以被符合规范的浏览器和HTML解析器解析
 

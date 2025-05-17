@@ -57,7 +57,7 @@ function App () {
 
 2. 三元表达式 *?:*
     
-    `{loading ? <span>loading</span> : <span>this is span</span>`
+    `{loading ? <span>loading</span> : <span>this is span</span>}`
 
 3. 复杂情况 *自定义函数+if判断语句*
     ```js
@@ -143,7 +143,7 @@ function App () {
 ```
 
 ## useState
-**概念**: 是一个React Hook(函数)，返回值是一个数组。允许向组件添加一个 *状态变量*，状态变量发生变化，组件视图UI也会跟着变化（*数据驱动试图*）
+**概念**: 是一个React Hook(函数)，返回值是一个数组。允许向组件添加一个 *状态变量*，状态变量发生变化，组件视图UI也会跟着变化（*数据驱动视图*）
 
 1. 修改简单数据类型状态 
     ```js
@@ -735,26 +735,26 @@ export default App
 1. 父传子：通过prop绑定数据
     ```js
     class Son extends Component {
-    render(){
-        return <div>子组件 {this.props.msg}</div>
-    }
+        render(){
+            return <div>子组件 {this.props.msg}</div>
+        }
     }
 
     class Parent extends Component {
-    state = {
-        msg: 'parent msg'
-    }
-    render(){
-        return <div>父组件<Son msg={this.state.msg}/></div>
-    }
+        state = {
+            msg: 'parent msg'
+        }
+        render(){
+            return <div>父组件<Son msg={this.state.msg}/></div>
+        }
     }
 
     function App(){
-    return (
-        <>
-        <Parent />
-        </>
-    )
+        return (
+            <>
+            <Parent />
+            </>
+        )
     }
 
     export default App
@@ -762,30 +762,30 @@ export default App
 2. 子传父：通过prop绑定父组件中的函数，子组件调用
     ```js
     class Son extends Component {
-    render(){
-        return <>
-        <div>子组件</div>
-        <button onClick={() => this.props.onGetSonMsg('son数据')}>sendMsgToParent</button>
-        </>
-    }
+        render(){
+            return <>
+            <div>子组件</div>
+            <button onClick={() => this.props.onGetSonMsg('son数据')}>sendMsgToParent</button>
+            </>
+        }
     }
 
     class Parent extends Component {
-    state = {}
-    getSonMsg = (sonMsg) => {
-        console.log(sonMsg)
-    }
-    render(){
-        return <div>父组件<Son onGetSonMsg={this.getSonMsg} /></div>
-    }
+        state = {}
+        getSonMsg = (sonMsg) => {
+            console.log(sonMsg)
+        }
+        render(){
+            return <div>父组件<Son onGetSonMsg={this.getSonMsg} /></div>
+        }
     }
 
     function App(){
-    return (
-        <>
-        <Parent />
-        </>
-    )
+        return (
+            <>
+            <Parent />
+            </>
+        )
     }
 
     export default App

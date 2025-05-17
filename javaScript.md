@@ -266,7 +266,7 @@ typeof运算符可以返回被检测的数据类型，支持以下两种语法�
         }
         const Peppa = new Pig('佩奇', 6, '女')
         ```
-        *注意：实例化构造函数时没有参数可以省略。实例化执行过程：1.创建新的空对象2.构造函数this指向新对象3.执行构造函数代码，修改this，添加新的属性4.返回新对象
+        *注意：实例化构造函数时没有参数可以省略。实例化执行过程：1.创建新的空对象 2.构造函数this指向新对象 3.执行构造函数代码，修改this，添加新的属性 4.返回新对象
 2. 查询 
     - 方法1：`对象名.属性名`
     - 方法2：`对象名['属性名']`
@@ -356,7 +356,7 @@ typeof运算符可以返回被检测的数据类型，支持以下两种语法�
 
 ## 堆栈空间
 1. 栈（操作系统）：由操作系统自动分配释放存放函数的参数值、局部变量的值等。简单数据类型会存放到栈里
-2. 堆（操作系统）：存储复杂类型（对象），一般又程序员分配释放，若不释放，则由垃圾回收机制回收
+2. 堆（操作系统）：存储复杂类型（对象），一般由程序员分配释放，若不释放，则由垃圾回收机制回收
 
 <img src="https://i-blog.csdnimg.cn/direct/c90455ee3e2c438da9ef8caed91c3f48.png#pic_center" width="600">
 
@@ -378,7 +378,7 @@ typeof运算符可以返回被检测的数据类型，支持以下两种语法�
 ### 获取DOM元素
 1. 根据CSS选择器来获取DOM元素
     - `document.querySelector('css选择器')` 选择匹配的第一个元素，若没有匹配到返回null。参数包含一个或多个有效的CSS选择器字符串。能直接操作修改
-    - `document.querySelectorAll('css选择器')` 选择匹配的多个元素，返回的是NodeList对象集合，得到的是一个伪数组。参数包含一个或多个有效的CSS选择器字符串。不能直接修改，需要通过遍历的方式给里面的元素做修改
+    - `document.querySelectorAll('css选择器')` 选择匹配的多个元素，返回的是NodeList对象集合，得到的是一个伪数组 (伪数组长得像数组，可以用数字下标访问、length属性等，但不能直接使用数组的方法，如push、forEach等)。参数包含一个或多个有效的CSS选择器字符串。不能直接修改，需要通过遍历的方式给里面的元素做修改
 2. 其他方法
     - `document.getElementById('nav')` 根据id获取一个元素
     - `document.getElementsByTagName('div')` 根据标签获取一类元素，该例子获取了页面所有div
@@ -603,12 +603,12 @@ ul.addEventListener('click', function(e){
 - 追加节点
     - 插入到父元素的最后一个子元素 `父元素.appendChild(要插入的元素)`
     - 插入到父元素中某个子元素的前面 `父元素.insertBefore(要插入的元素, 在哪个元素前面)`
-    ```js
-    const ul = document.querySelector('ul')
-    const li = document.createElement('li')
-    li.innerHTML = 'li'
-    ul.insertBefore(li, ul.children[0])
-    ```
+        ```js
+        const ul = document.querySelector('ul')
+        const li = document.createElement('li')
+        li.innerHTML = 'li'
+        ul.insertBefore(li, ul.children[0])
+        ```
 - 克隆节点 `元素.cloneNode(布尔值)` true则代表克隆会包含后代节点，false代表克隆不包含后代节点，默认为false
 
 **删除节点**：`父元素.removeChild(要删除的元素)` 若不存在父子关系则删除不成功
@@ -772,7 +772,7 @@ Swiper插件常用于移动端网站的内容触摸滑动
 console.log(/^[1-9][0-9]{4,}/.test('10000'))// 表示从10000开始，结果为true
 ```
 
-#### 元字符
+#### 修饰符
 **概念**：修饰符约束正则执行的某些细节行为，如是否区分大小写、是否支持多行匹配等<br>
 **语法**：
 - `/正则表达式/i` 正则匹配时字母不区分大小写
