@@ -213,3 +213,36 @@ getData()
 | res.url | 返回请求的url地址 |
 
 **常见方法**：`res.json()`
+
+# cookie
+**概念**：是网站存储在用户浏览器中的小型文本数据，由键值对组成。用于维持状态（如登录）<br>
+**查找**：可以右键检查 —> Application中找到cookie<br>
+**获取**：`document.cookie`获取当前域名下的所有cookie (HttpOnly为ture的敏感数据无法获取)
+
+<img src="https://i-blog.csdnimg.cn/direct/00c8a598902d46e18734c5f92f04904e.png#pic_center" width="700">
+
+*注意不能跨浏览器读取cookie
+
+<img src="https://i-blog.csdnimg.cn/direct/77264baed95e4fb4b34f3c31bd798aeb.png#pic_center" width="700">
+
+
+# 网络请求跨域问题
+**概念**：是由浏览器的同源策略（Same-Origin Policy）引起的，当请求的协议（http/https）、域名、端口任一不同时，浏览器会阻止请求<br>
+**解决**：
+1. CORS(后端才能解决)
+2. Vite 配置（vite.config.js）
+    ```js
+    export default {
+        server: {
+            proxy: {
+                <!-- 匹配所有以/api开头的请求路径 -->
+                '/api': {
+                    target: 'http://target-server.com',  // 目标服务器
+                    changeOrigin: true,
+                    pathRewrite: {'/api' : ''},
+                },
+            },
+        },
+    };
+    ```
+3. 等等

@@ -1,6 +1,38 @@
 # Vue
 **概念**：渐进式JavaScript框架。基于标准HTML、CSS和JavaScript构建，提供了一套声明式的、组件化的编程模型。易学易用，性能出色，适用场景丰富的Web前端框架
 
+## MVVM模型
+1. 模型Model：对应data中的数据
+2. 视图View：模板
+3. 视图模型ViewModel：Vue实例对象
+
+<img src="https://i-blog.csdnimg.cn/direct/f4b9596d35b44e3e9d253782b52e86e3.png#pic_center" width="600">
+
+## 虚拟DOM
+**概念**：是一种在内存中构建和操作的 JavaScript 对象树，用来描述真实 DOM 的结构信息，是为了解决浏览器性能问题引入的概念。其中的diff算法 是用来高效对比新旧虚拟DOM（Virtual DOM），找出最小差异并更新真实DOM的机制。
+
+## 数据代理
+**概念**：通过vm对象来代理data对象中属性的操作(读/写)，从而方便操作data中的数据<br>
+**基本原理**：
+1. 通过Object.defineProperty()把data对象中所有属性添加到vm上
+2. 为每一个添加到vm上的属性，都指定一个getter/setter
+3. 在getter/setter内部去操作(读/写)data中对应的属性
+
+<img src="https://i-blog.csdnimg.cn/direct/277599c6b1484af3a5be037dec3cea08.png#pic_center" width="700">
+
+## Vue监视数据的原理
+**概念**：Vue会监视data中所有层次的数据<br>
+>**监测对象中的数据**：通过setter实现监视，且在new Vue时就传入要监测的数据
+>1. 对象中后追加的属性，Vue默认不做响应式处理
+>2. 如需给后追加的属性做响应式，使用`Vue.set(target, propertyName/index, value)` 或 `vm.$set(target, propertyName/index, value)`，但是注意这两种方法不能给vm或vm的根数据对象(data、_data)添加属性
+
+>**监测数组中的数据**：通过包裹数组更新元素(如push、pop等)的方法实现，本质是做了如下两件事
+>1. 调用原生对应的方法对数组进行更新
+>2. 重新解析模板，进而更新页面
+
+## Vue数据劫持
+**概念**：是Vue实现响应式的核心机制，它通过拦截对象属性的读写操作，使得数据变化时能自动触发视图更新。（Vue2用 Object.defineProperty，Vue3用 Proxy）
+
 ## Vue API 风格
 1. 选项式 API
 2. 组合式 API
@@ -20,6 +52,35 @@
 - `main.js`：项目的JavaScript入口，初始化Vue实例并挂载到DOM
 - `App.vue` ：根组件文件，承载整个应用的组件结构和公共布局
 - `index.html`：静态页面模板，提供Vue挂载的DOM容器节点（如`<div id="app">`）
+
+## el的两种写法
+```js
+const v = new Vue({
+    // el:'#root', // 第一种写法
+    data:{
+        name:'wjn'
+    }
+})
+v.$mount('#root') // 第二种写法
+```
+
+## data的两种写法
+```js
+const vm = new Vue({
+    el:'#root', 
+    // 第一种写法：对象式
+    data:{
+        name:'wjn'
+    }
+    // 第二种写法：函数式 (推荐，上一种在用到组件时会报错)
+    data(){
+        return{
+            name:'wjn'
+        }
+    }
+})
+```
+
 
 ## 模板语法
 **概念**：Vue使用一种基于HTML的模板语法，使我们能够声明式地将其组件实例的数据绑定到呈现的DOM上。所有的Vue模板都是语法层面合法的HTML，可以被符合规范的浏览器和HTML解析器解析
@@ -108,7 +169,7 @@ export default{
 ```
 
 ## 条件渲染
-- `v-if`：这块内容只有在指令的表达式返回真值时才被渲染
+- `v-if`：这块内容只有在指令的表达式返回真值时才被渲染。当这块内容中为真值时，就不会再去判断v-else和v-else-if里的内容
 - `v-else`
     ```html
     <template>
@@ -349,9 +410,46 @@ export default{
     }
     </script>
     ```
-- `.once`
-- `.enter`
+- `.once`：事件只触发一次
 - 等等
+
+**键盘事件**：
+1. 按键别名
+    - `.enter`：回车
+        ```html
+        <template>
+            <input type="text" @keyup.enter="showInfo">
+        </template>
+
+        <script>
+        export default{
+            data(){
+                return{
+
+                }
+            },
+            methods:{
+                showInfo(e){
+                    console.log(e.target.value);
+                }
+            }
+        }
+        </script>
+        ```
+    - `.delete`：删除
+    - `.esc`：退出
+    - `.space`：空格
+    - `.tab`：换行 (特殊，须配合keydown使用)
+    - `.up`：上
+    - `.down`：下
+    - `.left`：左
+    - `.right`：右
+2. Vue未提供别名的按键，可以使用按键原始key值去绑定，两个单词组成的词注意要转为kebab-case形式
+3. 系统修饰键：`ctrl`、`alt`、`shift`、`meta`
+    - 配合keyup使用：按下修饰键的同时按下其他键，随后释放其他键，事件才被触发
+    - 配合keydown使用：正常触发事件
+4. 使用keyCode去指定具体的按键(不推荐)
+5. `Vue.config.keyCodes.自定义键名 = 键码`：定制按键别名
 
 ## 数组变化侦测
 **概念**：Vue能够侦听响应式数组的变更办法，并在它们被调用时触发相关的更新<br>
@@ -391,7 +489,8 @@ export default{
 ```
 
 ## 计算属性
-**概念**：来描述依赖响应式状态的复杂逻辑
+**概念**：来描述依赖响应式状态的复杂逻辑。或者可以理解为要用的属性不存在，要通过已有属性计算得来
+**原理**：底层借助了Object.defineProperty方法提供的getter和setter。其中get函数在初次读取时会执行一次，当依赖数据发生变化时再次调用。set函数是计算属性要被修改时使用。
 ```html
 <template>
     <h3>{{ baizhan.name }}</h3>
@@ -411,6 +510,16 @@ export default{
     },
     // 计算属性
     computed:{
+        // 完整写法
+        baizhanContent:{
+            get(){
+                return this.baizhan.content.length > 0 ? 'Yes' : 'No'
+            },
+            set(value){
+                console.log(value)
+            }
+        }
+        // 如果不需要set函数可以使用以下简写
         baizhanContent(){
             return this.baizhan.content.length > 0 ? 'Yes' : 'No'
         }
@@ -490,6 +599,7 @@ export default{
 ```
 
 ## 侦听器
+**概念**：当监听属性变化时，回调函数自动调用，进行相关操作
 ```html
 <template>
     <p>{{ message }}</p>
@@ -509,7 +619,15 @@ export default{
         }
     },
     watch:{
-        // 函数名必须与侦听的数据对象保持一致
+        // 完整写法
+        message:{
+            immediate:true, // 初始时让handler调用一下
+            deep:true, // 深度监视，用于监测对象内部多层值改变
+            handler(newValue,oldValue){
+                console.log(newValue,oldValue);
+            }
+        }
+        // 如果不需要immediate和deep可以如下简写
         message(newValue,oldValue){
             // 数据发生变化，自动执行的函数
             console.log(newValue,oldValue);
@@ -523,18 +641,32 @@ export default{
 **方法**：`v-model`<br>
 **修饰符**：
 - .lazy：默认情况，v-model会在每次input事件后更新数据，添加lazy可以改为在每次change事件后更新数据
-- .number
-- .trim
+- .number：将输入的内容自动转为数字类型
+- .trim：自动去除输入的首尾空格
 
 ```html
 <template>
     <form>
         <!-- 实现输入即获取 -->
-        <input type="text" v-model="message">
+        <input type="text" v-model="userInfo.message">
         <p>{{ message }}</p>
-        <!-- 实现复选框没选中文字是false，选中文字为true -->
-        <input type="checkbox" id="checkbox" v-model="checked">
-        <label for="checkbox">{{ checked }}</label>
+        <!-- 年龄输入框 -->
+        年龄<input type="number" v-model.number="userInfo.age">
+        <!-- 单选框 -->
+        男<input type="radio" name="sex" v-model="userInfo.sex" value="male">
+        女<input type="radio" name="sex" v-model="userInfo.sex" value="female">
+        <!-- 复选框 -->
+        学习<input type="checkbox" v-model="userInfo.hobby" value="study"> 
+        吃饭<input type="checkbox" v-model="userInfo.hobby" value="eat"> 
+        <!-- 下拉菜单 -->
+        <select v-model="userInfo.city">
+            <option value="jiaxing">嘉兴</option>
+            <option value="hangzhou">杭州</option>
+        </select>
+        <!-- 文本域 -->
+        <textarea v-model.lazy="userInfo.other"></textarea>
+        <!-- 同意条款框。没有设置input的value属性，收集的就是checked，勾选为ture，不勾选为false -->
+        <input type="checkbox" v-model="userInfo.agree">阅读并接受条款
     </form>
 </template>
 
@@ -542,13 +674,24 @@ export default{
 export default{
     data(){
         return{
-            message:"",
-            checked:false
+            userInfo:[
+                message:"",
+                age:null,
+                sex:"female",
+                hobby:[],
+                city:"",
+                other:"",
+                agree:""
+            ]
         }
     }
 }
 </script>
 ```
+
+vue中有两种数据绑定方式：
+1. 单向绑定v-bind：数据只能从data流向页面
+2. 双向绑定v-model：数据不仅能从data流向页面，还能从页面流向data。一般应用在表单类元素(输入类元素)上。v-model:value可以简写成v-model，因为v-model默认收集的就是value值
 
 ## 模板引用：获取DOM
 **方法**：`ref` (没有特别需求，不要操作DOM)
@@ -577,7 +720,12 @@ export default{
 ```
 
 ## 组件组成
+**模块与组件的区别**：模块是向外提供特定功能的js程序，一般就是一个js文件；组件是用来实现局部功能效果的代码集合(html/css/js...)<br>
 **优势**：可复用性<br>
+**Vue实例和组件实例**：为的是让组件实例对象vc可以访问到Vue原型上的属性和方法
+
+<img src="https://i-blog.csdnimg.cn/direct/1388a67c0b6348c3880531194c56f64b.png#pic_center" width="800">
+
 **组件注册**：组件在使用前需先被注册，这样Vue才能在渲染模板时找到其对应的实现
 - 全局注册 (虽然方便但项目中的依赖关系没那么明确；全局注册但没有使用的组件会被一起生产打包，使得文件过大)
     ```js
@@ -604,22 +752,22 @@ export default{
     <script>
         // 1. 引入组件
         import MyComponent from "./components/MyComponent.vue"
-    export default{
-        // 2. 注入组件
-        components:{
-            MyComponent
+        export default{
+            // 2. 注入组件
+            components:{
+                MyComponent
+            }
         }
-    }
     </script>
 
-    <!-- scoped让当前样式只在当前组件中生效 -->
+    <!-- scoped让当前样式只在当前组件中生效。如果有lang="xxx"，指定样式语言类型，如less，默认是css -->
     <style scoped>
     </style>
     ```
 
 ## 组件传递数据
 ### 父传子
-**方法**：`props` 传递数据是只读的，不能修改父元素传递过来的数据
+**方法**：`props` 传递数据是只读的，不能修改父元素传递过来的数据(可以通过在子组件data中重新定义一个变量，把传递的数据放进去再进行修改)
 - 静态数据传递
     ```html
     <template>
@@ -790,6 +938,7 @@ export default{
 ```html
 <template>
     <h3>Parent</h3>
+    <!-- 当Child触发someEvent自定义事件，Parent就触发getHandle事件，这两个事件名可以一样 -->
     <Child @someEvent="getHandle"/>
     <p>{{ message }}</p>
 </template>
@@ -1067,10 +1216,12 @@ export default{
 
 ## 组件生命周期
 **生命周期函数**：
-1. 创建期：beforeCreate、created
-2. 挂载期：beforeMount、mounted
-3. 更新期：beforeUpdate、updated
-4. 销毁期：beforeUnmount、unmounted
+1. 创建期：`beforeCreate`、`created`
+2. 挂载期：`beforeMount`、`mounted`
+3. 更新期：`beforeUpdate`、`updated`
+4. 销毁期：`beforeUnmount`、`unmounted`
+
+**注意**：常用`mounted`发送请求、启动定时器、绑定自定义事件等；`beforeUnmount`清除定时器、解绑自定义事件等
 
 <img src="https://i-blog.csdnimg.cn/direct/72eced7bffec4c738025384b31ccd2db.png#pic_center" width="600">
 
@@ -1262,3 +1413,201 @@ const app = createApp(App)
 app.provide("globalData","全局数据")
 app.mount('#app')
 ```
+
+## Vuex
+**概念**：Vue 的官方状态管理库，用于集中管理组件间共享的数据<br>
+**工作原理**：
+
+<img src="https://i-blog.csdnimg.cn/direct/f3026f2640934aeda220bde6c6175449.png#pic_center" width="500">
+
+**使用**：
+1. `npm i vuex`
+2. 创建 Vuex Store：在 src/store/index.js 中定义 Store
+    ```js
+    import { createStore } from 'vuex'
+
+    export default createStore({
+        state: {
+            count: 0,
+            user: null
+        },
+        // 简单状态变更（如计数器增减、切换布尔值）直接使用Mutation
+        mutations: {
+            increment(state, amount) {
+                state.count += amount
+            },
+            setUser(state, user) {
+                state.user = user
+            }
+        },
+        // 异步操作（如 API 请求、定时器）先 Action 再 Mutation
+        actions: {
+            async fetchUser({ commit }, userId) {
+                const user = await api.getUser(userId) // 模拟 API 请求
+                commit('setUser', user)
+            }
+        },
+        // getters不是必须使用的，能将state中的数据进行加工
+        getters: {
+            doubleCount: (state) => state.count * 2
+        }
+    })
+    ```
+3. 将 Store 注入 Vue 应用：main.js中加入
+    ```js
+    import { createApp } from 'vue'
+    import App from './App.vue'
+    import store from './store' // 导入 Store
+
+    const app = createApp(App)
+    app.use(store) // 注入 Store
+    app.mount('#app')
+    ```
+4. 在组件中使用
+    ```js
+    <template>
+    <div>
+        <p>Count: {{ count }}</p>
+        <p>Double: {{ doubleCount }}</p>
+        <button @click="increment(3)">+3</button>
+    </div>
+    </template>
+
+    <script>
+    import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
+    export default {
+        computed: {
+            // 使用 mapState 映射 state.count
+            ...mapState(['count']),
+            // 使用 mapGetters 映射 getters.doubleCount
+            ...mapGetters(['doubleCount'])
+        },
+        methods: {
+            // 使用 mapMutations 映射 mutations.increment
+            ...mapMutations(['increment']),
+            // 使用 mapActions 映射 actions.fetchUser
+            ...mapActions(['fetchUser'])
+        }
+    };
+    </script>
+    ```
+**拆分为模块**：
+1. 目录结构
+    ```
+    src/
+    store/
+        index.js       # 主入口文件
+        modules/
+        counter.js   # 计数器模块
+        api.js       # API 请求模块
+    ```
+2. 模块定义
+- 计数器模块 (store/modules/counter.js)
+    ```js
+    const counter = {
+    namespaced: true, // 启用命名空间
+    state: {
+        count: 0
+    },
+    mutations: {
+        increment(state, amount) {
+        state.count += amount;
+        }
+    },
+    actions: {
+        incrementAsync({ commit }, payload) {
+        setTimeout(() => {
+            commit('increment', payload.amount);
+        }, 1000);
+        }
+    },
+    getters: {
+        doubleCount: (state) => state.count * 2
+    }
+    };
+
+    export default counter
+    ```
+- API 请求模块 (store/modules/api.js)
+    ```js
+    const api = {
+    namespaced: true, // 启用命名空间
+    state: {
+        user: null
+    },
+    mutations: {
+        setUser(state, user) {
+        state.user = user;
+        }
+    },
+    actions: {
+        async fetchUser({ commit }, userId) {
+        const user = await mockApi.getUser(userId); // 模拟 API 请求
+        commit('setUser', user);
+        }
+    }
+    };
+
+    // 模拟 API
+    const mockApi = {
+    getUser: (userId) => {
+        return new Promise((resolve) => {
+        setTimeout(() => {
+            resolve({ id: userId, name: 'User ' + userId });
+        }, 500);
+        });
+    }
+    };
+
+    export default api
+    ```
+3. 主 Store 文件 (store/index.js)
+    ```js
+    import { createStore } from 'vuex';
+    import counter from './modules/counter';
+    import api from './modules/api';
+
+    export default createStore({
+    modules: {
+        counter,
+        api
+    }
+    })
+    ```
+4. 组件中使用（带命名空间）
+    ```js
+    <template>
+    <div>
+        <!-- 计数器模块 -->
+        <p>Count: {{ count }}</p>
+        <p>Double: {{ doubleCount }}</p>
+        <button @click="increment(1)">+1</button>
+        <button @click="incrementAsync({ amount: 2 })">+2 Async</button>
+
+        <!-- API 模块 -->
+        <p>User: {{ user?.name }}</p>
+        <button @click="fetchUser(123)">Fetch User</button>
+    </div>
+    </template>
+
+    <script>
+    import { mapState, mapGetters, mapMutations, mapActions } from 'vuex';
+
+    export default {
+    computed: {
+        // 计数器模块
+        ...mapState('counter', ['count']),
+        ...mapGetters('counter', ['doubleCount']),
+        // API 模块
+        ...mapState('api', ['user'])
+    },
+    methods: {
+        // 计数器模块
+        ...mapMutations('counter', ['increment']),
+        ...mapActions('counter', ['incrementAsync']),
+        // API 模块
+        ...mapActions('api', ['fetchUser'])
+    }
+    };
+    </script>
+    ```
