@@ -1611,3 +1611,211 @@ app.mount('#app')
     };
     </script>
     ```
+
+## vue-router
+**路由概念**：路由route就是一组key-value的对应关系，key为路径，value可能是function或component。多个路由，需要经过路由器router的管理<br>
+**路由分类**：
+1. 前端路由：
+    - value是component，用于展示页面内容
+    - 工作过程：当浏览器的路径改变时，对应组件就会显示
+2. 后端路由
+    - value是function，用于处理客户端提交的请求
+    - 工作过程：服务器接收到一个请求时，根据请求路径找到匹配的函数来处理请求，返回响应数据
+
+**概念**：vue中的一个插件库，用来实现SPA (single page web application) 应用<br>
+**SPA应用概念**：
+1. 单页Web应用
+2. 整个应用只有一个完整的页面
+3. 点击导航链接不会刷新页面，只会做页面的局部更新
+4. 数据需要通过ajax请求获取
+
+<img src="https://i-blog.csdnimg.cn/direct/752ddfb73f0f4b15820a74017cfddec5.png#pic_center" width="600">
+
+**使用**：
+1. `npm i vue-router`
+2. 在项目中新建文件夹router，内新建index.js (可以将路由组件放置在pages文件夹下，一般组件放在components文件夹下)
+    ```js
+    import { createRouter, createWebHistory } from 'vue-router'
+
+    const router = createRouter({
+        history: createWebHistory(), // 去除URL中的 #符号
+        routes: [
+            { path: '/counttool', component: () => import('../pages/CountTool.vue') }, 
+        ],
+    })
+
+    export default router
+    ```
+3. 在项目的main.js中引入
+    ```js
+    import { createApp } from 'vue'
+    import App from './App.vue'
+    import router from './router'
+
+    const app = createApp(App)
+    app.use(router)
+    app.mount('#app')
+    ```
+4. 实现切换 (router-link会转成a标签，active-class可配置点击实现高亮样式) 
+`<router-link active-class="active" to="/counttool">CountTool</router-link>`
+5. 指定展示位置
+`<router-view></router-view>`
+
+*注意：当路由切换时，离开的页面组件会被销毁，新进入的页面组件会重新创建
+
+**嵌套(多级)路由使用**：
+1. 修改router/index.js中代码
+    ```js
+    const router = createRouter({
+        history: createWebHistory(),
+        routes: [
+            { 
+                path: '/counttool', 
+                component: () => import('../pages/CountTool.vue'),
+                children: [
+                    {
+                        path: 'news',  // 这里不需要加 '/'
+                        component: () => import('../pages/News.vue')
+                    }
+                ]
+            },
+        ],
+    })
+    ```
+2. 访问方式 (要写完整路径)
+`<router-link to="/counttool/news">新闻</router-link>`
+
+**query参数**：
+1. 传递参数：：注意携带query参数既能使用命名路由，又能使用path
+    ```js
+    <ul>
+        <li v-for="m in messageList" :key="m.id">
+            <router-link :to="{
+                path:'/counttool/news'
+                query:{
+                    id:m.id,
+                    title:m.title
+                }
+            }">
+                {{m.title}}
+            </router-link>
+        </li>
+    </ul>
+    ```
+2. 接收参数
+    ```
+    $route.query.id
+    $route.query.title
+    ```
+
+**params参数**：
+1. 路由配置router/index.js
+    ```js
+    {
+        // 命名路由
+        name: 'article',
+        path: '/article/:category/:title',
+        component: () => import('../pages/Article.vue')
+    }
+    ```
+2. 传递参数：注意携带params参数的对象写法只能使用命名路由
+    ```js
+    <ul>
+        <li v-for="m in messageList" :key="m.id">
+            <router-link :to="{
+                name:'article'
+                params:{
+                    id:m.id,
+                    title:m.title
+                }
+            }">
+                {{m.title}}
+            </router-link>
+        </li>
+    </ul>
+    ```
+3. 接收参数
+    ```
+    $route.params.id
+    $route.params.title
+    ```
+
+**路由的props配置**：让路由组件更方便的收到参数
+1. 路由配置router/index.js
+    ```js
+    {
+        name: 'article',
+        path: '/article/:category/:title',
+        component: () => import('../pages/Article.vue')
+        // 第一种写法，值为对象，会以props的形式传递给组件
+        props:{a:1}
+        // 第二种写法，值为布尔值，会把该组件收到的所有params参数以props的形式传递给组件
+        props:true
+        // 第三种写法，值为函数
+        props($route){
+            return {id:$route.query.id, tltie:$route.query.title}
+        }
+    }
+    ```
+2. 在Article.vue中
+    ```
+    props:['id', 'title']
+    ```
+
+**编程式路由导航**：不借助router-link实现路由跳转
+- `$router.forward()`：前进
+- `$router.back()`：后退
+- `$router.go(number)`：number正数前进number步，负数反之
+- `$router.push(...)`：跳转新页面，新增历史记录
+    ```js
+    <template>
+        <ul>
+            <li v-for="m in messageList" :key="m.id">
+                <button @click="pushShow(m)">push方式</button>
+            </li>
+        </ul>
+    </template>
+    
+    <script>
+        export default {
+            data(){
+                return{
+                    messageList:[...]
+                }
+            },
+            methods:{
+                pushShow(m){
+                    this.$router.push({
+                        name:'article'
+                        query:{
+                            id:m.id,
+                            title:m.title
+                        }
+                    })
+                }
+            }
+        }
+    </script>
+    ```
+- `$router.replace(...)`：跳转新页面，替换当前历史记录
+
+### 路由守卫
+**概念**：用于在路由跳转前或跳转后，执行特定逻辑，比如权限验证、登录检查、数据加载等<br>
+**守卫类型**：
+1. beforeEach 全局前置守卫 —— 初始化的时候被调用、每次路由切换之前被调用
+    ```js
+    // router/index.js 
+    router.beforeEach((to, from, next) => {
+    if (to.path === '/home/news') {
+        if(localStorage.getItem('student') === 'wjn'){
+            next()
+        } else {
+            alert('无权限查看')
+        }
+    } else {
+        next()
+    }
+    })
+    ```
+2. afterEach 全局后置
+3. 等等
