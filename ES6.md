@@ -48,17 +48,17 @@ oBox.innerHTML = htmlTel;
     ```js
     // b=0表示当未传递b参数时，b默认值为0
     function add(a, b = 0){
-        return a + b;
+      return a + b;
     }
     add(10); // 结果为10
     ```
 2. 默认的表达式也可以是一个函数
     ```js
     function getVal(val) {
-    return val + 5;
+      return val + 5;
     }
     function add(a, b = getVal(5)) {
-    return a + b;
+      return a + b;
     }
     console.log(add(10)); // 结果20
     ```
@@ -523,13 +523,14 @@ class Person {
       this.name = name;
       this.age = age;
   }
-  //等同于Person.prototype = function sayName(){}
+  //等同于Person.prototype = function sayName(){}，sayName方法在类的原型对象上
   sayName(){
       return this.name;
   }
 }
 let p1 = new Person('wu',18);
 console.log(p1);// Person {name: "wu", age:18}
+p1.sayName()
 ```
 
 ### 类的继承

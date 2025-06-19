@@ -9,7 +9,15 @@ npx : Node.js工具命令，查找并执行后续的包命令
 **概念**：是JavaScript和XML(HTML)的缩写，表示在 *JS代码中编写HTML模板结构*，是React中编写UI模板的方式<br>
 **优势**：1.HTML的声明式模板写法 2.JS的可编程能力<br>
 **本质**：不是标准JS语法，是JS的语法扩展，浏览器需要通过解析工具解析后才能运行(*BABEL*)<br>
-**使用**：注意if语句、switch语句、声明变量属于语句，不是表达式，不能出现在{}中
+**语法规范**：
+1. 标签中混入JS表达式用{}
+2. 样式类名不用class而是className
+3. 内联样式用style={{color:'red'}}的形式
+4. 只有一个根标签
+5. 标签必须闭合
+6. 标签首字母若小写，则将标签转为html中同名元素；若为大写，react就去渲染对应的组件
+
+*注意if语句、switch语句、声明变量属于语句，不是表达式，不能出现在{}中
 ```js
 const count = 100
 function getName () {
@@ -79,6 +87,10 @@ function App () {
         )
     }
     ```
+
+# 虚拟DOM
+**概念**：是一种用 JavaScript 对象来描述真实 DOM 结构的技术，用于提高渲染性能。更新 UI 时，先更新虚拟 DOM，再通过 diff 算法比较新旧虚拟 DOM，最终以最小的代价更新真实 DOM。与Vue虚拟DOM有一定区别
+
 # React
 ## 事件绑定
 1. 基础事件绑定
@@ -893,24 +905,24 @@ export default App
 
     // 创建store
     const useStore = create((set) => {
-    return {
-        // 状态数据
-        count: 0,
-        // 修改状态数据的方法
-        inc: () => {
-            set((state) => ({ count: state.count + 1 }))
+        return {
+            // 状态数据
+            count: 0,
+            // 修改状态数据的方法
+            inc: () => {
+                set((state) => ({ count: state.count + 1 }))
+            }
         }
-    }
     })
 
     // 绑定store到组件
     function App(){
-    const {count, inc} = useStore()
-    return (
-        <>
-        <button onClick={inc}>{count}</button>
-        </>
-    )
+        const {count, inc} = useStore()
+        return (
+            <>
+            <button onClick={inc}>{count}</button>
+            </>
+        )
     }
 
     export default App
@@ -1251,11 +1263,6 @@ const Layout = () => {
     }
     ```
     步骤3：在入口文件index.js中导入定制主题文件`import './theme.css'`
-
-## SCSS
-**概念**：是一种后缀名为.scss的预编译CSS语言，支持一些原生CSS不支持的高级用法，比如变量使用，嵌套语法等，使用SCSS可以让样式代码更加高效灵活
-
-**接入SCSS**：`npm install sass -D`
 
 ## 统一封装请求
 **概念**：整个项目中会发送很多网络请求，使用axios三方库做统一封装，方便统一管理和复用

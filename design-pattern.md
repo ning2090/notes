@@ -62,3 +62,8 @@ function fn(){
     console.log("原本功能")
 }
 ```
+
+# 软件架构设计模式
+1. MVC（Model-View-Controller）：将应用分为模型、视图、控制器三层，前端后端都常用。
+2. MVVM（Model-View-ViewModel）：Model 代表数据模型，数据和业务逻辑都在Model层中定义；View 代表UI视图，负责数据的展示；ViewModel 负责监听 Model 中数据的改变并且控制视图的更新，处理用户交互操作。MVVM模式通过ViewModel实现Model与View的双向自动同步：Model驱动视图渲染，View交互更新Model，开发者只需管理数据，无需直接操作DOM。
+3. 等等

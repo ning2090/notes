@@ -251,6 +251,21 @@ typeof运算符可以返回被检测的数据类型，支持以下两种语法�
         })
         console.log(re)// [50, 33]
         ```
+    - slice方法：截取并返回新数组。slice(start, end)从下标 start 开始，截取到（不包含）end
+        ```js
+        const arr = [10, 20, 30, 40, 50]
+        const sliced = arr.slice(1, 4)
+        console.log(sliced)  // [20, 30, 40]
+        ```
+    - concat方法：合并数组，返回新数组
+        ```js
+        const arr1 = [1, 2]
+        const arr2 = [3, 4]
+        console.log(arr1.concat(arr2))  // [1, 2, 3, 4]
+        ```
+
+修改原数组的方法：push()、pop()、shift()、unshift()、splice()、sort()、reverse() 等<br>
+返回新数组的方法：map()、filter()、slice()、concat() 等
 
 ## 对象
 **概念**：无序的数据集合
@@ -1480,7 +1495,7 @@ console.log(ldh instanceof Object) // true
     p1.walk()
     ```
 **改变this指向**：
-- function.call(thisArg, arg1, arg2, ...)：其中thisArg指的是在function函数运行时指定的this值。返回值就是函数的返回值，因为它就是调用函数（了解）
+1. function.call(thisArg, arg1, arg2, ...)：其中thisArg指的是在function函数运行时指定的this值。返回值就是函数的返回值，因为它就是调用函数（了解）
     ```js
     const obj = {
         uname:'pink'
@@ -1491,7 +1506,7 @@ console.log(ldh instanceof Object) // true
     }
     fn.call(obj, 1, 2) // this指向obj 且 输出3
     ```
-- function.apply(thisArg,[argsArray])：其中thisArg指的是在function函数运行时指定的this值。argsArray是传递的值，必须包含在数组里面。返回值就是函数的返回值，因为它就是调用函数
+2. function.apply(thisArg,[argsArray])：其中thisArg指的是在function函数运行时指定的this值。argsArray是传递的值，必须包含在数组里面。返回值就是函数的返回值，因为它就是调用函数
     ```js
     const obj = {
         uname:'pink'
@@ -1507,7 +1522,7 @@ console.log(ldh instanceof Object) // true
     const max = Math.max.apply(Math, arr)
     console.log(max) // 100
     ```
-- function.bind(thisArg, arg1, arg2, ...)：该方法不会调用函数。其中thisArg指的是在function函数运行时指定的this值。返回由指定的this值和初始化参数改造的原函数拷贝（新函数）
+3. function.bind(thisArg, arg1, arg2, ...)：该方法不会调用函数。其中thisArg指的是在function函数运行时指定的this值。返回由指定的this值和初始化参数改造的原函数拷贝（新函数）
     ```js
     const obj = {
         uname:'pink'

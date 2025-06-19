@@ -240,12 +240,12 @@ li {
 **用法**：`display:flex;`
 |属性名|效果|
 |--|--|
-|justify-content|主轴对齐方式。center、space-between、space-around、space-evenly、flex-start从起点开始依次排序(默认)、flex-end|
+|justify-content|主轴对齐方式。center、space-between、space-around、space-evenly、flex-start从起点开始依次排序(默认)、flex-end<br> <img src="https://i-blog.csdnimg.cn/direct/54600c55b95c4b57b29a2ec5a6a14b33.png#pic_center" width="600">|
 |align-items|侧轴对齐方式 (给弹性容器设置)。stretch拉伸至铺满容器、center、flex-start、flex-end|
 |align-self|某个弹性盒子侧轴对齐方式 (给弹性盒子设置)|
-|flex-direction|修改主轴方向。row水平(默认)、column垂直、row-reverse水平从右往左、column-reverse垂直从下向上|
+|flex-direction|修改主轴方向。row水平(默认)、column垂直、row-reverse水平从右往左、column-reverse垂直从下向上<br> <img src="https://i-blog.csdnimg.cn/direct/d7c5d3c182e8466b89e4cd2e17093d9e.png#pic_center" width="500">|
 |flex|主轴方向弹性伸缩比。整数数字，表示占用父级剩余尺寸的份数|
-|flex-wrap|弹性盒子换行。wrap换行、nowrap不换行(默认)|
+|flex-wrap|弹性盒子换行。wrap换行、nowrap不换行(默认)<br> <img src="https://i-blog.csdnimg.cn/direct/dc0385a31912414eba5e2206132a0fc1.png#pic_center" width="350">|
 |align-content|行对齐方式。center、space-between、space-around、space-evenly、flex-start、flex-end|
 
 *注意：默认情况下，主轴方向尺寸靠内容撑开，侧轴默认拉伸
@@ -518,3 +518,59 @@ animation:
 ### nav
 **方法**：ul > li > a 避免堆砌a标签，网站搜索排名降级<br>
 **思路**：li设置右侧margin，a设置左右padding
+
+# CSS预处理器
+## less
+**概念**：是一个CSS预处理器，文件后缀.less。浏览器不识别less代码，所以目前网页要引入对应的CSS文件<br>
+**VS Code插件**：Easy LESS，保存less文件后自动生成对应的CSS文件<br>
+**运算**：
+- 加、减、乘直接书写计算表达式
+- 除法需要添加 小括号 或 .
+    ```less
+    .box {
+        width: (68 / 37.5rem);
+        height: 68 ./ 37.5rem;
+    }
+    ```
+- 若表达式有多个单位，最终css里以第一个单位为准
+
+**嵌套**：快速生成后代选择器
+```less
+.father {
+    ...
+    .son {
+        ...
+        a {
+            color: green;
+            // & 表示的是当前选择器，配合hover伪类或nth-child结构伪类使用
+            &:hover {
+                color: blue;
+            }
+        }
+    }
+}
+```
+
+**变量**：容器，存储数据，方便使用和修改
+```less
+// 1. 定义变量
+@myColor: pink;
+
+// 2. 使用变量
+.box {
+    color: @myColor;
+}
+```
+
+**导入**：`@import "./base.less"` 导入less公共样式文件，less文件可以省略后缀<br>
+**导出**：less文件第一行添加，若是文件夹名称后面添加/
+```less
+// out: ./index.css
+// out: ./css/
+```
+**禁止导出**：less文件第一行添加 `// out:false`
+
+## SCSS
+**概念**：是一种后缀名为.scss的预编译CSS语言，支持一些原生CSS不支持的高级用法，比如变量使用，嵌套语法等，使用SCSS可以让样式代码更加高效灵活
+
+**接入SCSS**：`npm install sass -D`

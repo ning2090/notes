@@ -1612,6 +1612,70 @@ app.mount('#app')
     </script>
     ```
 
+## Pinia
+**与Vuex对比**：去掉了mutation，提供符合组合式风格的API，去掉了modules的概念，每一个store都是一个独立的模块，搭配TypeScript一起使用提供可靠的类型推断
+**使用**：
+1. `npm install pinia`
+2. 在main.js文件中
+    ```js
+    import{createPinia} from 'pinia'
+    const pinia = createPinia()
+    createApp(App).use(pinia).mount('#app')
+    ```
+3. 创建store
+    ```js
+    // stores/counter.js
+    import { defineStore } from 'pinia'
+    import { ref, computed } from 'vue'
+
+    export const useCounterStore = defineStore('counter', () => {
+        // 数据(state)
+        const count = ref(0)
+        // action 同步+异步
+        function increment() {
+        count.value++
+        }
+        // getter
+        const doubleCount = computed(() => count.value * 2)
+
+        return { count,increment,doubleCount }
+    })
+    ```
+    异步action：
+    ```js
+    const API_URL = 'http://...'
+    const list = ref([])
+    const loadList = async () => {
+        const res = await axios.get(API_URL)
+        list.value = res.data.data.channels
+    }
+    ```
+4. 在组件中使用
+    ```js
+    <script setup>
+    import { useCounterStore } from './stores/counter'
+    const { countStore } = useCounterStore()
+    </script>
+
+    <template>
+    <div>
+        <h2>Count: {{ countStore.count }}</h2>
+        <button @click="countStore.increment">+1</button>
+        <h2>{{ countStore.doubleCount }}</h2>
+    </div>
+    </template>
+    ```
+### storeToRefs
+**解决**：可以辅助保持数据(state+getter)的响应式解构
+```js
+import { storeToRefs } from 'pinia'
+const { count, doubleCount } = storeToRefs(counterStore)
+```
+*注意：store中的方法还是需要直接解构的
+```js
+const { increment } = counterStore
+```
+
 ## vue-router
 **路由概念**：路由route就是一组key-value的对应关系，key为路径，value可能是function或component。多个路由，需要经过路由器router的管理<br>
 **路由分类**：
@@ -1799,6 +1863,20 @@ app.mount('#app')
     ```
 - `$router.replace(...)`：跳转新页面，替换当前历史记录
 
+### 路由元meta
+**概念**：是vue-router中路由配置的一部分，用于存放自定义的元信息
+```js
+{
+  path: '/dashboard',
+  component: Dashboard,
+  meta: {
+    // 标记这个页面是否需要登录权限
+    requiresAuth: true,
+    title: '仪表盘'
+  }
+}
+```
+
 ### 路由守卫
 **概念**：用于在路由跳转前或跳转后，执行特定逻辑，比如权限验证、登录检查、数据加载等<br>
 **守卫类型**：
@@ -1806,16 +1884,285 @@ app.mount('#app')
     ```js
     // router/index.js 
     router.beforeEach((to, from, next) => {
-    if (to.path === '/home/news') {
-        if(localStorage.getItem('student') === 'wjn'){
-            next()
+        if (to.meta.requiresAuth) {
+            if(localStorage.getItem('student') === 'wjn'){
+                next()
+            } else {
+                alert('无权限查看')
+            }
         } else {
-            alert('无权限查看')
+            next()
         }
-    } else {
-        next()
-    }
     })
     ```
-2. afterEach 全局后置
-3. 等等
+2. afterEach 全局后置守卫 —— 初始化的时候被调用、每次路由切换之后被调用
+    ```js
+    router.afterEach((to, from) => {
+        if (to.meta.title) {
+            document.title = to.meta.title
+        }
+    })
+    ```
+3. beforeEnter 路由独享守卫 —— 定义在单个路由配置中，只对该路由生效
+    ```js
+    {
+        path: '/admin',
+        component: () => import('./views/Admin.vue'),
+        beforeEnter: (to, from, next) => {
+            const isAdmin = localStorage.getItem('role') === 'admin'
+            if (isAdmin) {
+                next()
+            } else {
+                next('/no-permission')
+            }
+        }
+    }
+    ```
+4. 组件内守卫
+    - beforeRouteEnter —— 通过路由规则，进入该组件时被调用
+    - beforeRouteLeave —— 通过路由规则，离开该组件时被调用
+
+### 路由模式
+1. Hash 模式（默认） —— url中带 #，# 后面的路径不会被发送到服务器
+    ```js
+    const router = createRouter({
+        history: createWebHashHistory(),
+        ...
+    })
+    ```
+
+2. History 模式 —— 刷新页面或直接访问某个路径时会向服务器请求对应路径的文件；应用部署上线时需要后端人员支持，解决刷新页面服务器404的问题
+    ```js
+    const router = createRouter({
+        history: createWebHistory(),
+        ...
+    })
+    ```
+
+## Vue2和Vue3实现响应式对比
+**Vue2**:
+- 对象类型：通过Object.defineProperty()对数据的读取、修改进行拦截(数据劫持)
+- 数组类型：通过重写更新数组的一系列方法来实现拦截。(对数组的变更方法进行了包裹)
+```js
+Object.defineProperty(data,'count',{
+    get(){},
+    set(){}
+})
+```
+*存在问题：新增和删除属性，界面不会更新。无法通过下标修改数组。(但这些问题都可以通过其他方法解决)
+
+**Vue3**:
+- 通过Proxy(代理)：拦截对象中任意属性的变化，包括属性值的读写、属性的添加、属性的删除等
+- 通过Reflect(反射)：对源对象的属性进行操作
+```js
+new Proxy(target, {
+    get(target, prop) {
+      return Reflect.get(target, prop)
+    },
+    set(target, prop, value) {
+      return Reflect.set(target, prop, value)
+    },
+    deleteProperty(target, prop) {
+      return Reflect.deleteProperty(target, key)
+    }
+})
+```
+
+# Vue3
+## 组合式API入口 — setup
+**触发时机**：在生命周期beforeCreate之前<br>
+**this指向**：指向undefined<br>
+
+## ref和reactive
+**作用**：用函数调用的方式生成响应式数据<br>
+**对比**：
+1. reactive不能处理简单类型数据
+2. ref参数类型支持更好但是必须通过.value属性访问修改
+3. ref函数的内部实现依赖于reactive函数
+
+**使用**：
+```js
+<script setup>
+import { ref, reactive } from 'vue'
+
+// 基本类型用 ref
+const count = ref(0)
+const increment = () => {
+    count.value++
+}
+
+// 对象用 reactive
+const user = reactive({
+    name: 'wu',
+    age: 18
+})
+const add = () => {
+    user.age++
+}
+</script>
+```
+
+## computed
+```js
+<script setup>
+import { computed } from 'vue'
+
+const computedState = computed(() => {
+    return 计算后的值
+})
+</script>
+```
+
+## watch
+```js
+<script setup>
+import { ref, watch } from 'vue'
+const count = ref(0)
+const name = ref('wu')
+
+watch(count, (newValue, oldValue) => {
+    console.log(newValue)
+})
+// 侦听多个数据源
+watch([count, name], ([newCount, newName], [oldCount, oldName]) => {
+    console.log('count或name发生改变')
+})
+// 侦听器创建时立即触发回调immediate
+watch(count, () => {
+    console.log('count发生改变')
+},{
+    immediate: true
+})
+// ref对象默认浅层侦听，直接修改嵌套的对象属性不会触发回调执行，需开启deep
+const state = ref({count:0})
+watch(state, () => {
+    console.log('count发生改变')
+},{
+    deep: true
+})
+// 精确侦听对象的某个属性
+const info = ref({
+    name:'wu',
+    age:18
+})
+watch(
+    () => info.value.age,
+    () => console.log('age改变了')
+)
+</script>
+```
+
+## 生命周期
+
+<img src="https://i-blog.csdnimg.cn/direct/aec2fa76603e444aa54c02cfa83edec3.png#pic_center" width="600">
+
+```js
+<script setup>
+import { onMounted } from 'vue'
+
+onMounted(() => {
+    ...
+})
+</script>
+```
+*注意：生命周期函数可以执行多次，多次执行时传入的回调会在时机成熟时依次执行
+
+## 父传子
+```js
+<script setup>
+// 引入后无需注册就能使用
+import Son from './son.vue'
+</script>
+
+<template>
+    <Son message="father message"/>
+</template>
+```
+```js
+<script setup>
+// 通过defineProps "编译器宏" 接收传递的数据
+const props = defineProps({
+    message:String
+})
+</script>
+
+<template>
+    {{message}}
+</template>
+```
+
+## 子传父
+```js
+<script setup>
+import Son from './son.vue'
+const getMessage = (msg) => {
+    console.log(msg)
+}
+</script>
+
+<template>
+    <Son @get-message="getMessage" />
+</template>
+```
+```js
+<script setup>
+// 通过defineEmits编译器宏生成emit方法
+const emit = defineEmits(['get-message'])
+const sendMsg = () => {
+    emit('get-message', 'son message')
+}
+</script>
+
+<template>
+    <button @click="sendMsg">发送数据</button>
+</template>
+```
+
+## 模板引用
+### 获取dom
+```js
+<script setup>
+import { ref } from 'vue'
+// 获取的dom存放在h1Ref.value中
+const h1Ref = ref(null)
+</script>
+
+<template>
+    <h1 ref="h1Ref">h1标签</h1>
+</template>
+```
+
+### defineExpose()
+**作用**：默认情况下组件内部的属性和方法是不开放给父组件访问的，通过defineExpose编译宏指定哪些属性和方法可以允许访问
+
+## 跨层组件通信
+### 顶层传底层
+1. 顶层组件通过`provide`函数提供数据
+    ```js
+    provide('key', 顶层数据)
+    ```
+2. 底层组件通过`inject`函数获取数据
+    ```js
+    const message = inject('key')
+    ```
+
+顶层传底层方法，实现底层修改顶层的数据：
+```js
+// 顶层组件中
+const count = ref(0)
+const setCount = () => {
+    count.value++
+}
+provide('setCount-key', setCount)
+```
+```js
+// 底层组件中
+<script setup>
+import { inject } from 'vue'
+const setCount = inject('setCount-key')
+</script>
+
+<template>
+    <button @click="setCount">修改数据</button>
+</template>
+```
