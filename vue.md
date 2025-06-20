@@ -1720,10 +1720,10 @@ const { increment } = counterStore
     app.use(router)
     app.mount('#app')
     ```
-4. 实现切换 (router-link会转成a标签，active-class可配置点击实现高亮样式) 
-`<router-link active-class="active" to="/counttool">CountTool</router-link>`
+4. 实现切换 (RouterLink会转成a标签，active-class可配置点击实现高亮样式) 
+`<RouterLink active-class="active" to="/counttool">CountTool</RouterLink>`
 5. 指定展示位置
-`<router-view></router-view>`
+`<RouterView></RouterView>`
 
 *注意：当路由切换时，离开的页面组件会被销毁，新进入的页面组件会重新创建
 
@@ -1747,14 +1747,14 @@ const { increment } = counterStore
     })
     ```
 2. 访问方式 (要写完整路径)
-`<router-link to="/counttool/news">新闻</router-link>`
+`<RouterLink to="/counttool/news">新闻</RouterLink>`
 
 **query参数**：
 1. 传递参数：：注意携带query参数既能使用命名路由，又能使用path
     ```js
     <ul>
         <li v-for="m in messageList" :key="m.id">
-            <router-link :to="{
+            <RouterLink :to="{
                 path:'/counttool/news'
                 query:{
                     id:m.id,
@@ -1762,7 +1762,7 @@ const { increment } = counterStore
                 }
             }">
                 {{m.title}}
-            </router-link>
+            </RouterLink>
         </li>
     </ul>
     ```
@@ -1786,7 +1786,7 @@ const { increment } = counterStore
     ```js
     <ul>
         <li v-for="m in messageList" :key="m.id">
-            <router-link :to="{
+            <RouterLink :to="{
                 name:'article'
                 params:{
                     id:m.id,
@@ -1794,7 +1794,7 @@ const { increment } = counterStore
                 }
             }">
                 {{m.title}}
-            </router-link>
+            </RouterLink>
         </li>
     </ul>
     ```
@@ -1826,7 +1826,7 @@ const { increment } = counterStore
     props:['id', 'title']
     ```
 
-**编程式路由导航**：不借助router-link实现路由跳转
+**编程式路由导航**：不借助RouterLink实现路由跳转
 - `$router.forward()`：前进
 - `$router.back()`：后退
 - `$router.go(number)`：number正数前进number步，负数反之
