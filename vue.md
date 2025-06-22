@@ -2052,6 +2052,17 @@ watch(
 </script>
 ```
 
+## watchEffect
+**概念**：自动收集依赖、立即执行、无新旧值、不适合部分依赖监听
+```js
+import { ref, watchEffect } from 'vue'
+const count = ref(0)
+
+watchEffect(() => {
+  console.log(`自动监听count，现在是 ${count.value}`);
+})
+```
+
 ## 生命周期
 
 <img src="https://i-blog.csdnimg.cn/direct/aec2fa76603e444aa54c02cfa83edec3.png#pic_center" width="600">
