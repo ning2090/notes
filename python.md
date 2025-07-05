@@ -172,6 +172,7 @@
 - 删除元素：`字典.pop(key)`
 - 清空字典：`字典.clear()`
 - 获取全部key：`字典.keys()`
+- 获取全部value：`字典.values()`
 - 统计元素数量：`len(字典)`
 - 遍历：for循环
     ```python

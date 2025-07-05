@@ -1613,7 +1613,7 @@ app.mount('#app')
     ```
 
 ## Pinia
-**与Vuex对比**：去掉了mutation，提供符合组合式风格的API，去掉了modules的概念，每一个store都是一个独立的模块，搭配TypeScript一起使用提供可靠的类型推断
+**与Vuex对比**：去掉了mutation，提供符合组合式风格的API，去掉了modules的概念，每一个store都是一个独立的模块，搭配TypeScript一起使用提供可靠的类型推断<br>
 **使用**：
 1. `npm install pinia`
 2. 在main.js文件中
@@ -1633,7 +1633,7 @@ app.mount('#app')
         const count = ref(0)
         // action 同步+异步
         function increment() {
-        count.value++
+            count.value++
         }
         // getter
         const doubleCount = computed(() => count.value * 2)
@@ -1675,6 +1675,36 @@ const { count, doubleCount } = storeToRefs(counterStore)
 ```js
 const { increment } = counterStore
 ```
+
+### 持久化用户数据
+**问题**：Pinia的存储基于内存，刷新就丢失，需要保持token不丢失，保持登录状态<br>
+**解决**：使用`pinia-plugin-persistedstate`插件。插件原理是操作state时把用户数据在localStorage存一份，刷新时会从localStorage中先取<br>
+**步骤**：
+1. `npm i pinia-plugin-persistedstate`
+2. pinia注册插件
+    ```js
+    import { createPinia } from 'pinia'
+    import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
+
+    const pinia = createPinia()
+    pinia.use(piniaPluginPersistedstate)
+    ```
+3. 在需要持久化的仓库内添加`persist:true`
+    ```js
+    export const useUserStore = defineStore('user', () => {
+        const userInfo = ref({})
+        const getUserInfo = async ({account,password}) => {
+            const res = await loginAPI({account,password})
+            userInfo.value = res.result
+        }
+
+        return{
+            userInfo,
+            getUserInfo
+        }
+    },{persist: true})
+    ```
+
 
 ## vue-router
 **路由概念**：路由route就是一组key-value的对应关系，key为路径，value可能是function或component。多个路由，需要经过路由器router的管理<br>
@@ -2177,3 +2207,46 @@ const setCount = inject('setCount-key')
     <button @click="setCount">修改数据</button>
 </template>
 ```
+
+# 项目优化
+1. 路由缓存优化<br>
+    原因：路由只有参数变化时，会复用组件示例，这也意味着组件生命周期函数不会被调用<br>
+    解决方法：
+    1. 给RouterView添加key，破坏复用机制，强制销毁重建 `RouterView :key="$route.fullPath"`
+    2. 使用onBeforeRouteUpdate导航钩子，可以在每次路由更新之前执行，在回调中执行需要数据更新的业务逻辑
+        ```js
+        onBeforeRouteUpdate((to,from) => {
+            getCategory(to.params.id)
+        })
+        ```
+2. 定制路由行为<br>
+    原因：不同路由切换时，会停留在原先的位置，要解决实现自动滚动到页面的顶部<br>
+    解决方法：vue-router支持`scrollBehavior`配置项，可以指定路由切换时滚动位置
+    ```js
+    scrollBehavior(){
+        return { top:0 }
+    }
+    ```
+3. 渲染模板时遇到对象多层属性访问<br>
+    原因：异步数据未加载完，就开始渲染，导致出错Cannot read properties of null<br>
+    解决方法：
+    1. 可选链运算符（?.）`user?.name` 或 `user?.name || '未知'`
+    2. v-if控制渲染
+4. token失效后请求接口会报401状态码错误<br>
+    解决方法：在响应拦截器中统一处理 (清除过期的用户信息，跳转到登录页)
+    ```js
+    httpInstance.interceptors.response.use(function (response) {
+        return response.data;
+    }, function (error) {
+        const userStore = useUserStore()
+        // 统一错误提示
+        const message = error.response?.data?.message || '请求失败'
+        ElMessage.error(message)
+        // 401token失效处理
+        if(error.response.status === 401){
+            userStore.clearUserInfo()
+            router.push('/login')
+        }
+        return Promise.reject(error);
+    });
+    ```
