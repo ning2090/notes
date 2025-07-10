@@ -289,6 +289,7 @@ def 函数名(形参):
 2. 必须先定义后使用
 3. 在return后的代码不会执行
 4. 不使用return语句即返回None
+5. 不定长参数：形参若是`*args`，所有参数都会被args变量收集，是元组类型；形参若是`**kwargs`，所有键值对参数都会被kwargs变量收集，是字典类型
 
 ## 全局变量global
 ```python
@@ -301,3 +302,441 @@ def test():
 
 test()
 ```
+
+## lambda匿名函数
+```python
+lambda 传入参数: 函数体（一行代码）
+```
+*注意：无名称的匿名函数，只可临时使用一次
+
+# 文件的读取
+## open(name, mode, encoding)读取文件
+**概念**：打开或创建文件。name是文件名也可是具体路径。mode常用的三种访问模式有`r`只读方式，文件指针放在文件开头；`w`写入，若该文件已存在则原有内容删除从头开始编辑，若不存在创建新文件；`a`追加，若该文件已存在则新内容写入到已有内容之后，若不存在创建新文件
+```python
+f = open('python.txt','r',encoding='UTF-8')
+```
+*注意：f是open函数的文件对象，拥有属性和方法
+
+**方法**：
+- `文件对象.read(num)`：num是读取的数据长度，单位字节，若没有传入num，表示读取文件中所有数据
+- `文件对象.readlines()`：按照行的方式把文件内容一次性读取，返回的是一个列表，每一行数据就是一个元素
+- `文件对象.readline()`：一次读取一行内容
+- for循环读取文件行
+    ```python
+    for line in open('python.txt','r'):
+        print(line)
+    ```
+- `with open() as f`：在操作后自动close文件
+    ```python
+    with open('python.txt','r') as f:
+        f.readlines()
+    ```
+
+## write()文件写入
+**概念**：调用write内容并未真正写入文件，会积攒在程序内存中，称为缓冲区，当调用flush时才会真正写入，这样避免频繁操作硬盘导致效率下降
+```python
+f = open('python.txt','w')
+f.write('hello')
+# 刷新
+f.flush()
+f.close()
+```
+
+## close() 关闭文件，内置flush功能
+
+# 捕获异常
+- 捕获常规异常
+    ```python
+    try:
+        可能发生错误的代码
+    except [异常 as 别名]:
+        如果出现异常执行的代码
+    [else:]
+        没有异常时执行的代码
+    [finally:]
+        无论是否有异常都执行的代码
+    ```
+- 捕获多个异常
+    ```python
+    try:
+        print(1/0)
+    except (NameError, ZeroDivisionError):
+        print('变量未定义 或 除以0异常错误')
+    ```
+    *注意：捕获Exception就是捕获所有异常
+
+**异常特点**：传递性
+
+# 模块导入
+```python
+[from 模块名] import [模块|类|变量|函数|*] [as 别名]
+```
+*注意：导入不同模块的同名功能，调用到的是后面导入的模块功能
+
+## 自定义模块自测
+```python
+def test(a,b):
+    print(a+b)
+
+# 只在当前文件内调用该函数，其他导入该文件的文件内不会执行该函数
+if __name__ == '__main__':
+    test(1,2)
+```
+
+## __all__
+**概念**：当模块文件内有__all__变量，当使用from xxx import *时，智能导入这个列表中的元素
+```python
+__all__ = ['test_A']
+
+def test_A():
+    print('testA')
+
+def test_B():
+    print('testB')
+```
+
+# Json数据转化
+```python
+import json
+data = [{"name":"wu","age":18},{"name":"yu","age":18}]
+# 把python数据转化为json数据。默认所有非 ASCII 字符会转义成 \uXXXX，如果数据中有中文添加ensure_ascii=False，输出正常的中文
+data = json.dumps(data, ensure_ascii=False)
+# 把json数据转化为python数据
+data = json.loads(data)
+```
+
+# class类
+```python
+class Student:
+    name = None
+    age = None
+    def say(self, msg):
+        print(f"hi, {self.name},{msg}")
+
+stu_1 = Student()
+stu_1.name = 'wu'
+stu_1.age = 18
+stu_1.say("hello")
+```
+
+## 类内置方法——魔术方法
+1. __init__构造方法：使用构造方法对成员变量进行赋值，内部自动调用这些方法，就不用像上面的代码一样一个个进行赋值了
+    ```python
+    class Student:
+        def __init__(self, name, age):
+            self.name = name
+            self.age = age
+
+    stu_1 = Student("wu", 18)
+    ```
+2. __str__字符串方法：原本类对象转换成字符串时，会输出内存地址，使用该方法可以控制类转换成字符串
+    ```python
+    class Student:
+        def __init__(self, name, age):
+            self.name = name
+            self.age = age
+        
+        def __str__(self):
+            return f"hi,{self.name}"
+
+    stu_1 = Student("wu", 18)
+    print(stu_1) # hi,wu
+    print(str(stu_1)) # hi,wu
+    ```
+3. __lt__小于、大于符号比较
+    ```python
+    class Student:
+        def __init__(self, name, age):
+            self.name = name
+            self.age = age
+        
+        def __lt__(self, other):
+            return self.age < other.age
+
+    stu_1 = Student("wu", 18)
+    stu_2 = Student("yu", 19)
+    print(stu_1 < stu_2) # True
+    ```
+4. __le__小于等于、大于等于符号比较
+5. __eq__符号==比较
+
+## 私有成员
+**概念**：在类中提供仅供内部使用的属性和方法，类对象无法使用
+```python
+class Student:
+    name = None
+    age = None
+    # 私有成员变量
+    __telephone = None
+    def say(self, msg):
+        print(f"hi, {self.name},{msg}")
+    # 私有成员方法
+    def __say_telephone(self):
+        print(f"tel：{self.__telephone}")
+
+stu_1 = Student()
+```
+
+## 继承
+1. 单继承
+    ```python
+    class Phone:
+        producer = None
+        def call_by_4g(self):
+            print("4g通话")
+
+    class Phone2025(Phone):
+        face_id = True
+        def call_by_5g(self):
+            print("5g通话")
+    ```
+2. 多继承：若父类有同名属性或方法，先继承的优先级高于后继承
+    ```python
+    class 类名(父类1, 父类2, ...):
+        类内容体
+    ```
+
+### pass关键字
+**概念**：是一个占位语句，用于代码块中暂时不写任何内容时保持语法正确
+
+### super()调用父类成员
+**概念**：用于在子类中调用父类的方法或属性
+```python
+class Phone:
+    producer = "ITCAST"
+    def call_by_4g(self):
+        print("4g通话")
+
+class MyPhone(Phone):
+    # 复写
+    producer = "ITCAST"
+    def call_by_4g(self):
+        # 方式1调用父类成员
+        print(f"父类品牌：{Phone.producer}")
+        phone.call_by_4g(self)
+
+        # 方式2调用父类成员
+        print(f"父类品牌：{super().producer}")
+        super().call_by_4g(self)
+```
+
+## 多态
+```python
+# 包含抽象方法（指的是没有具体实现的方法pass）的类称为抽象类，方便子类做具体实现
+class Animal:
+    def speak(self):
+        pass
+
+class Dog(Animal):
+    def speak(self):
+        print("汪汪汪")
+
+class Cat(Animal):
+    def speak(self):
+        print("喵喵喵")
+
+def make_noise(animal:Animal):
+    animal.speak()
+
+dog = Dog()
+cat = Cat()
+make_noise(dog) # 汪汪汪
+make_noise(cat) # 喵喵喵
+```
+
+# 类型注解
+```python
+var_1:bool = True
+my_list: list[int] = [1,2,3]
+def 函数/方法名(形参:类型) -> 返回值类型:
+    pass
+```
+
+## Union类型
+**概念**：先 `from typing import Union`，再 `Union[类型, ...]`定义联合类型注解
+
+# 闭包
+```python
+def outer(logo):
+    def inner(msg):
+        print(f"<{logo}>{msg}<{logo}>")
+    return inner
+
+fn1 = outer('hi')
+fn1('wjn') # <hi>wjn<hi>
+fn1('ysy') # <hi>ysy<hi>
+```
+
+## nonlocal关键字
+**概念**：修改外部函数的值
+```python
+def outer(num1):
+    def inner(num2):
+        nonlocal num1
+        num1 += num2
+        print(num1)
+    return inner
+
+fn1 = outer(10)
+fn1(10) # 20
+fn1(10) # 30
+```
+
+## 装饰器
+**概念**：创建一个闭包函数，在闭包函数内调用目标函数，可以达到不改动目标函数的同时，增加额外的功能
+```python
+def outer(func):
+    def inner():
+        print("要睡觉了")
+        func()
+    return inner
+
+@outer
+def sleep():
+    import random
+    import time
+    print("睡眠中")
+    time.sleep(random.randint(1,5))
+
+sleep()
+```
+
+# 进程、线程
+**概念**：操作系统中可以运行多个进程，即多任务运行，进程之间是内存隔离的。一个进程内可以运行多个线程，即多线程运行，多个线程之间是共享这个进程所拥有的内存空间的
+
+## python多线程——threading
+```python
+import threading
+
+# group：用于未来扩展，一般填None。target：线程要执行的目标函数。name：线程的名称，默认会自动生成。args：以元组方式给执行任务传参。kwargs：以字典方式给执行任务传参。
+thread_obj = threading.Thread([group[,target[,name[,args[,kwargs]]]]])
+
+thread_obj.start()
+```
+
+# Socket
+**概念**：负责进程之间的网络数据传输
+
+## Python Socket 服务端编程
+```python
+import socket
+
+# 1. 创建socket对象
+server_socket = socket.socket()
+
+# 2. 绑定 IP 和端口号
+server_socket.bind(('127.0.0.1', 8888))
+
+# 3. 开始监听，最多允许 5 个连接等待
+server_socket.listen(5)
+
+# 4. 等待客户端连接
+client_socket, addr = server_socket.accept()
+print(f"客户端已连接，地址：{addr}")
+
+# 5. 接收客户端数据（最多 1024 字节）
+data = client_socket.recv(1024)
+print("收到客户端消息：", data.decode())
+
+# 6. 回复客户端
+client_socket.send("你好，客户端！".encode())
+
+# 7. 关闭连接
+client_socket.close()
+server_socket.close()
+```
+
+## Python Socket 客户端编程
+```python
+import socket
+
+# 1. 创建 socket 对象
+client_socket = socket.socket()
+
+# 2. 连接服务器（IP 地址和端口要与服务端一致）
+client_socket.connect(('127.0.0.1', 8888))
+
+# 3. 发送数据给服务端
+client_socket.send("你好，服务端！".encode())
+
+# 4. 接收服务端回复的数据，1024是缓冲区大小，一般1024即可
+data = client_socket.recv(1024)
+print("收到服务端消息：", data.decode())
+
+# 5. 关闭连接
+client_socket.close()
+```
+
+# 正则表达式
+**基础方法**：
+1. `re.match(匹配规则, 被匹配的字符串)`：从字符串开头匹配，只匹配开头，成功返回match对象，失败返回None
+    ```python
+    import re
+
+    s = "hello world"
+    result = re.match(r'hello', s)  # 开头匹配"hello"
+    print(result)  # <re.Match object; span=(0, 5), match='hello'>
+    print(result.group())  # hello
+    ```
+2. `re.search(匹配规则, 被匹配的字符串)`：在整个字符串中搜索第一个匹配，返回match对象，失败返回None
+    ```python
+    import re
+
+    s = "say hello world"
+    # 这里的r表示字符串中转义字符无效，就是普通字符的意思
+    result = re.search(r'hello', s)  # 查找第一个"hello"
+    print(result)  # <re.Match object; span=(4, 9), match='hello'>
+    print(result.group())  # hello
+    ```
+3. `re.findall(匹配规则, 被匹配的字符串)`：返回所有匹配的结果，列表形式，没有返回空列表[]
+    ```python
+    import re
+
+    s = "hello world, hello python"
+    result = re.findall(r'hello', s)  # 查找所有"hello"
+    print(result)  # ['hello', 'hello']
+    ```
+
+## 元字符匹配
+**单字符匹配**：
+| 表达式  | 含义                     | 
+| ---- | ---------------------- | 
+| `.`  | 匹配**除换行符外**的任意单个字符     | 
+| `\d` | 匹配**数字**（0-9）          | 
+| `\D` | 匹配**非数字**              | 
+| `\w` | 匹配**字母、数字、下划线**        | 
+| `\W` | 匹配**非字母、数字、下划线**       | 
+| `\s` | 匹配**空白字符**（空格、制表符、换行符） | 
+| `\S` | 匹配**非空白字符**            | 
+
+**数量匹配**：
+| 表达式     | 含义                |
+| ------- | ----------------- |
+| `*`     | 重复**0次或多次**       |
+| `+`     | 重复**1次或多次**       |
+| `?`     | 重复**0次或1次**       |
+| `{n}`   | 重复**n次**          |
+| `{n,}`  | 重复**至少n次**        |
+| `{n,m}` | 重复**n到m次（包含n和m）** |
+
+**边界匹配**：
+| 表达式  | 含义                      |
+| ---- | ----------------------- |
+| `^`  | 匹配**字符串的开头**            |
+| `$`  | 匹配**字符串的结尾**            |
+| `\A` | 匹配**字符串开始位置**（不受多行模式影响） |
+| `\Z` | 匹配**字符串结束位置**（不受多行模式影响） |
+| `\b` | 匹配**单词边界**              |
+| `\B` | 匹配**非单词边界**             |
+
+**分组匹配**：
+| 表达式             | 含义                   |
+| --------------- | -------------------- |
+| `()`            | 分组，提取子串，或用于数量限定符作用范围 |
+| `(?:...)`       | 非捕获分组，仅分组但不捕获        |
+| `(?P<name>...)` | 命名分组，分组的同时给该分组命名     |
+| `(?P=name)`     | 引用命名分组               |
+| `\num`          | 引用第 num 个分组（数字从1开始）  |
+
+# 递归
+**概念**：函数自己调用自己
