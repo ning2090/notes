@@ -2,9 +2,9 @@
 **概念**：统一资源定位符，网址，用于访问服务器上资源<br>
 **组成**：http://hmajax.itheima.net:80/api/province?name=wu&age=18<br>
 1. http协议：超文本传输协议，规定浏览器和服务器之间传输数据的格式，协议范围http，https等
-2. hmajax.itheima.net域名：标记服务器在互联网中方位
-3. /api/provinc资源路径：标记资源在服务器下的具体位置。params参数是资源路径的一部分，通常用于 标识唯一资源（如 ID、用户名等）
-4. :80端口号：标记服务器里不同功能的服务程序，范围在0-65535之间的任意整数，默认访问80端口
+2. hmajax.itheima.net域名(也叫主机名host)：标记服务器在互联网中方位
+3. :80端口号：标记服务器里不同功能的服务程序，范围在0-65535之间的任意整数，HTTP 默认访问80端口
+4. /api/provinc资源路径：标记资源在服务器下的具体位置。params参数是资源路径的一部分，通常用于 标识唯一资源（如 ID、用户名等）
 5. ?name=wu&age=18查询参数query：浏览器提供给服务器的额外信息
 
 # 常见的服务程序
@@ -214,38 +214,29 @@ getData()
 
 **常见方法**：`res.json()`
 
-# cookie
-**概念**：是网站存储在用户浏览器中的小型文本数据，由键值对组成。用于维持状态（如登录）<br>
-**查找**：可以右键检查 —> Application中找到cookie<br>
-**获取**：`document.cookie`获取当前域名下的所有cookie (HttpOnly为ture的敏感数据无法获取)
-
-<img src="https://i-blog.csdnimg.cn/direct/00c8a598902d46e18734c5f92f04904e.png#pic_center" width="700">
-
-*注意不能跨浏览器读取cookie
-
-<img src="https://i-blog.csdnimg.cn/direct/77264baed95e4fb4b34f3c31bd798aeb.png#pic_center" width="700">
-
-
 # 网络请求跨域问题
 **概念**：是由浏览器的同源策略（Same-Origin Policy）引起的，当请求的协议（http/https）、域名、端口任一不同时，浏览器会阻止请求<br>
 **解决**：
 1. CORS(后端才能解决)
-2. Vite 配置（vite.config.js）
-    ```js
-    export default {
-        server: {
-            proxy: {
-                <!-- 匹配所有以/api开头的请求路径 -->
-                '/api': {
-                    target: 'http://target-server.com',  // 目标服务器
-                    changeOrigin: true,
-                    pathRewrite: {'/api' : ''},
+2. 代理转发（如 Nginx 反向代理）
+    - Vite 配置（vite.config.js）
+        ```js
+        export default {
+            server: {
+                proxy: {
+                    <!-- 匹配所有以/api开头的请求路径 -->
+                    '/api': {
+                        target: 'http://target-server.com',  // 目标服务器
+                        changeOrigin: true,
+                        pathRewrite: {'/api' : ''},
+                    },
                 },
             },
-        },
-    };
-    ```
-3. 等等
+        };
+        ```
+3. JSONP（仅限 GET 请求，已不推荐）
+4. WebSocket（不受同源策略限制）
+5. PostMessage（前端窗口间跨域通信）
 
 # 路由的历史记录管理
 **模式**：

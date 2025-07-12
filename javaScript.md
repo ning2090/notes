@@ -669,6 +669,10 @@ Swiper插件常用于移动端网站的内容触摸滑动
 
 *注意：由于浏览器能处理多线程，所以图中web api部分的宿主是浏览器或node
 
+**任务队列**：
+1. 宏任务（Macro Task）：主线任务，如UI渲染、setTimeout、setInterval、事件回调 等
+2. 微任务（Micro Task）：是比宏任务更“紧急”的任务，通常会在当前宏任务结束后立即执行，比下一次宏任务还早，如Promise.then/catch/finally、MutationObserver等
+
 **事件循环 event loop**：主线程不断的重复获取任务、执行任务的这种机制称为事件循环
 
 ### location对象
