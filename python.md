@@ -180,6 +180,10 @@
         # value为 字典[key]
         ...
     ``` 
+    ```python
+    for k, v in 字典.items():
+        print(f"key: {k}, value: {v}")
+    ```
 
 # 验证类型：`type()`
 
@@ -443,7 +447,7 @@ stu_1.say("hello")
     print(stu_1) # hi,wu
     print(str(stu_1)) # hi,wu
     ```
-3. __lt__小于、大于符号比较
+3. __lt__小于符号 __gt__大于符号比较
     ```python
     class Student:
         def __init__(self, name, age):
@@ -457,8 +461,9 @@ stu_1.say("hello")
     stu_2 = Student("yu", 19)
     print(stu_1 < stu_2) # True
     ```
-4. __le__小于等于、大于等于符号比较
+4. __le__小于等于符号 __ge__大于等于符号比较
 5. __eq__符号==比较
+6. __ne__符号!=比较
 
 ## 私有成员
 **概念**：在类中提供仅供内部使用的属性和方法，类对象无法使用
@@ -740,3 +745,12 @@ client_socket.close()
 
 # 递归
 **概念**：函数自己调用自己
+
+# 内存管理机制
+1. 引用计数机制：Python 通过为每个对象维护引用计数，在引用为零时立即回收内存
+2. 垃圾回收机制：为了处理循环引用，Python 引入了基于分代收集的垃圾回收机制
+3. 内存池机制：Python 使用内存池（如 pymalloc）来提高小对象的内存分配与释放效率
+
+
+# GIL 全局解释器锁
+**概念**：是 Python 解释器为保证线程安全而设置的一个锁，它限制了同一时刻只有一个线程在执行 Python 字节码
