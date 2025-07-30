@@ -88,7 +88,7 @@
     my_list.extend([4, 5, 6])
     print(my_list) # [1, 2, 3, 4, 5, 6]
     ```
-- 删除：`del 列表[下标索引]` 或 `列表.pop[下标索引]` 还能使用pop方法的返回值得到删除的元素
+- 删除：`del 列表[下标索引]` 或 `列表.pop(下标索引)` 还能使用pop方法的返回值得到删除的元素
 - 删除某元素在列表中的第一个匹配项：`列表.remove(元素)`
 - 清空列表：`列表.clear()`
 - 统计某元素在列表内的数量：`列表.count(元素)`
@@ -228,6 +228,7 @@ Unicode 是更大的国际标准，支持全球所有文字，Unicode 的前 128
     | `math.ceil(x)`  | 向上取整 | `math.ceil(3.2)` → 4    |
     | `math.floor(x)` | 向下取整 | `math.floor(3.8)` → 3   |
     | `math.trunc(x)` | 截断小数部分（只保留整数部分）    | `math.trunc(-3.7)` → -3 |
+4. 正无穷：`float('inf')` 负无穷：`float('-inf')`
 
 
 # 算术运算符
@@ -590,20 +591,18 @@ fn1(10) # 30
 ## 装饰器
 **概念**：创建一个闭包函数，在闭包函数内调用目标函数，可以达到不改动目标函数的同时，增加额外的功能
 ```python
-def outer(func):
-    def inner():
-        print("要睡觉了")
+def my_decorator(func):
+    def wrapper():
+        print("Before function")
         func()
-    return inner
+        print("After function")
+    return wrapper
 
-@outer
-def sleep():
-    import random
-    import time
-    print("睡眠中")
-    time.sleep(random.randint(1,5))
+@my_decorator
+def say_hello():
+    print("Hello")
 
-sleep()
+say_hello()
 ```
 
 # 进程、线程
