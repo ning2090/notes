@@ -116,6 +116,66 @@
 </script>
 ```
 
+**使用**：
+1. `npm i axios`
+2. 创建 axios 实例（通常放在 src/utils/axios.js 或 src/api/request.js）
+    ```js
+    import axios from 'axios'
+
+    // 创建 axios 实例
+    const service = axios.create({
+    baseURL: '/api', // 基础路径，根据项目环境设置
+    timeout: 5000,   // 请求超时时间
+    })
+
+    // 请求拦截器
+    service.interceptors.request.use(
+        config => {
+            // 这里可以添加 token
+            const token = localStorage.getItem('token')
+            if (token) {
+                config.headers.Authorization = `Bearer ${token}`
+            }
+            return config
+        },
+        error => Promise.reject(error)
+    )
+
+    // 响应拦截器
+    service.interceptors.response.use(
+        response => response.data, // 简化响应数据
+        error => {
+            // 统一错误处理
+            console.error('响应错误', error)
+            return Promise.reject(error)
+        }
+    )
+
+    export default service
+    ```
+3. 封装 API 方法（通常放在 src/api/index.js 或按模块划分）
+    ```js
+    import request from './request'
+
+    export const getUserInfo = (params) => {
+        return request({
+            url: '/user/info',
+            method: 'get',
+            params
+        })
+    }
+
+    export const login = (data) => {
+        return request({
+            url: '/auth/login',
+            method: 'post',
+            data
+        })
+    }
+    ```
+4. 在组件中使用 (vue和react不同)
+
+
 ## XHR
 **概念**：全称为XMLHttpRequest，用于与服务器交互。是axios的内部原理
 ```js

@@ -896,8 +896,96 @@ export default App
         dispatch(fetchChannelList())
     },[dispatch])
     ```
+
+# Redux Toolkit
+**概念**：Redux 官方推荐的现代状态管理方案，适合中大型项目
+1. `npm install @reduxjs/toolkit react-redux`
+2. 项目结构
+    ```
+    src/
+    ├── store/
+    │   ├── index.js          // 创建store
+    │   └── reducers/
+    │       └── tabSlice.js   // 创建slice模块
+    ```
+3. 创建 Slice
+    ```js
+    // store/reducers/tabSlice.js
+    import { createSlice } from '@reduxjs/toolkit';
+
+    const tabSlice = createSlice({
+    name: 'tab',
+    initialState: {
+        isCollapsed: false,
+    },
+    reducers: {
+        collapseMenu: (state) => {
+            state.isCollapsed = !state.isCollapsed;
+        }
+    }
+    });
+
+    export const { collapseMenu } = tabSlice.actions;
+    export default tabSlice.reducer;
+    ```
+4. 创建 Store 并注册模块
+    ```js
+    // store/index.js
+    import { configureStore } from '@reduxjs/toolkit';
+    import tabReducer from './tabSlice';
+
+    const store = configureStore({
+        reducer: {
+            tab: tabReducer
+        }
+    });
+
+    export default store;
+    ```
+5. 在应用入口绑定 Provider
+    ```js
+    import React from 'react';
+    import ReactDOM from 'react-dom/client';
+    import './index.css';
+    import App from './App';
+    import reportWebVitals from './reportWebVitals';
+    import { Provider } from 'react-redux';
+    import store from './store';
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(
+        <React.StrictMode>
+            <Provider store={store}>
+                <App />
+            </Provider>
+        </React.StrictMode>
+    );
+
+    // If you want to start measuring performance in your app, pass a function
+    // to log results (for example: reportWebVitals(console.log))
+    // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
+    reportWebVitals();
+    ```
+6. 在组件中使用 Redux
+    - 读取 state
+        ```js
+            import { useSelector } from 'react-redux';
+            const collapsed = useSelector((state) => state.tab.isCollapsed);
+        ```
+    - 派发 action
+        ```js
+        import { useDispatch } from 'react-redux';
+        import { collapseMenu } from '../store/tabSlice';
+
+        const dispatch = useDispatch();
+        dispatch(collapseMenu());
+        ```
+
+
+
+
 # zustand
-**概念**:极简的状态管理工具
+**概念**：极简的状态管理工具
 1. 安装包`npm i zustand`
 2. 创建store以及绑定store到组件
     ```js
