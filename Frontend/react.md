@@ -92,6 +92,11 @@ function App () {
 **概念**：是一种用 JavaScript 对象来描述真实 DOM 结构的技术，用于提高渲染性能。更新 UI 时，先更新虚拟 DOM，再通过 diff 算法比较新旧虚拟 DOM，最终以最小的代价更新真实 DOM。与Vue虚拟DOM有一定区别
 
 # React
+**写法方式**：
+1. 函数组件（现在常用）：使用普通的 function 或箭头函数定义，通过 Hooks（useState、useEffect 等）来管理状态和副作用，没有 this
+2. 类组件：使用 class 关键字，继承 React.Component，通过 this.state 管理状态，this.setState 更新状态，生命周期函数（如 componentDidMount）处理副作用
+
+# 函数组件
 ## 事件绑定
 1. 基础事件绑定
 
@@ -706,7 +711,7 @@ export default App
 
 <img src="https://i-blog.csdnimg.cn/direct/204ce79044bc47049ef8cb6cae3e9325.png#pic_center" width="600px" />
 
-# 类组件基础结构
+# 类组件
 **概念**：就是通过js中的类来组织组件的代码
 ```js
 import {Component} from "react"
