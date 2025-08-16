@@ -19,6 +19,7 @@
 5. `npm update 包名` 更新包到最新版本
 6. `npm uninstall 包名` 卸载指定包
 7. `npm i` 安装所有依赖包
+8. `npm ci` 安装所有依赖包，但会先清空 node_modules 并严格按照 package-lock.json 安装
 
 ## 下载包速度慢
 **原因**：默认从国外的 https://registry.npmjs.org/ 服务器进行下载，此时，网络数据的传输需要经过漫长的海底光缆，因此下包速度会很慢<br>
