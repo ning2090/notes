@@ -1,4 +1,13 @@
 # git
+## 基础配置
+```bash
+git config --global user.name "你的名字"
+git config --global user.email "你的邮箱"
+```
+## vscode扩展
+1. Git Graph
+2. GitLens
+
 ## 操作流程
 ### push操作流程
  1. github上新建仓库
@@ -22,6 +31,7 @@
  6. `git add .` 添加所有修改的文件到暂存区
  7. `git commit -m "modified"` 提交到本地仓库
  8. `git push` 提交到远程仓库
+
 ### 冲突文件操作流程
  1. 切到主支上
  2. `git pull` 将主支更新到最新状态
@@ -31,6 +41,13 @@
  6. `git add 冲突文件`
  7. `git rebase --continue` 继续rebase
  8. `git push --force` 由于进行了rebase操作，需要强制推送
+
+### 暂存当前开发
+1. 确保在当前的分支上
+2. `git stash` 暂存所有未提交的修改（包括已暂存和未暂存的文件）或 `git stash push -m "描述"` 添加描述信息，方便识别
+4. `git stash list` 查看暂存列表
+5. 切回开发分支上
+6. `git stash pop` 恢复最近的一次暂存并删除该暂存项（`git stash apply`是恢复但不删除）
 
 ## 命令
 ### git clone
@@ -67,6 +84,9 @@
 `git pull"`  更新本地仓库中的文件到最新的版本，这些最新版本是远程仓库中已存在的。实际执行了获取（fetch）和合并（merge）两个操作。
 ### git rebase
 `git rebase master`  将当前分支的更改应用到 master 分支的最新状态之上。当提交的分支存在冲突文件时使用。会将当前分支的更改内容先放在临时区域内，剩下的部分会与master上最新提交合并，再将临时区域的内容合上来。有些冲突的代码，需要手动accept并修改格式。
+### git remote
+`git remote`  查看远程仓库名
+`git remote -v`  查看远程仓库地址（fetch/push 的 URL）
 
 ## .gitignore
 常见需要忽略的包和文件类型：
