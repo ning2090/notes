@@ -193,21 +193,57 @@
 - str()
 
 # 数据容器通用操作
-1. 最大最小值：`max()` `min()`
-2. 求和：`sum()`
-3. 容器转换：`str(容器)` `list(容器)` `tuple(容器)` `set(容器)`
-4. 排序：`新列表 = sorted(容器, [reverse=True])` 加上reverse=True会降序排序
-5. 获取索引以及值
+1. 内置函数:
+    | 函数      | 功能              |
+    | ------- | --------------- |
+    | `max()` | 最大值       |
+    | `min()` | 最小值         |
+    | `sum()` | 求和      |
+    | `abs()` | 绝对值         |
+    | `round(x, ndigits=0)` | 四舍五入，可指定小数位数   |
+    | `pow(x, y)` | 幂运算（等价于 x**y）         |
+2. 容器转换：`str(容器)` `list(容器)` `tuple(容器)` `set(容器)`
+3. 排序：
+    - `新列表 = sorted(容器, [reverse=True])` 加上reverse=True会降序排序
+    - `原列表.sort()`
+4. 获取索引以及值
     ```python
     for index, item in enumerate(iterable, start=0):
         ...
     ```
-6. 映射处理序列：
+5. 映射处理序列：
     ```python
     nums = [1, 2, 3]
     result = map(str, nums)         # 把每个数字转成字符串
     print(list(result))             # ['1', '2', '3']
     ```
+6. 正无穷：`float('inf')` 负无穷：`float('-inf')`
+7. 字符串变成表达式并求值：`计算结果 = eval(str)`
+8. 进制转换：
+    - `bin(x)` 十进制→二进制（前缀 `0b`）
+    - `format(x, 'b')` 十进制→二进制，无前缀    
+    - `oct(x)` 十进制→八进制（前缀 `0o`）
+    - `format(x, 'o')` 十进制→八进制，无前缀
+    - `hex(x)` 十进制→十六进制（前缀 `0x`）
+    - `format(x, 'x')` 十进制→十六进制（小写），无前缀
+    - `format(x, 'X')` 十进制→十六进制（大写），无前缀
+    - `int(s, base)` 字符串s → 十进制（`base` 可取 2/8/16/任意进制）
+9. 统计频率：collections.Counter 可以用来统计很多 可迭代对象 (iterable) 中元素出现的频率
+    ```python
+    from collections import Counter
+
+    # 字符串
+    s = "hello"
+    print(Counter(s)) # Counter({'l': 2, 'h': 1, 'e': 1, 'o': 1})
+
+    # 字典
+    d = {"a": 10, "b": 20, "c": 30, "a": 10}
+    # 值的频率
+    print(Counter(d.values())) # Counter({10: 2, 20: 1, 30: 1})
+    ```
+
+
+
 
 # 其他操作
 1. 将一个字符串列表中的元素拼接成一个字符串，中间用指定的字符连接
@@ -222,12 +258,13 @@ Unicode 是更大的国际标准，支持全球所有文字，Unicode 的前 128
     | ------- | --------------- | --------------- |
     | `ord()` | 字符 → Unicode 编码 | `ord('A') → 65` |
     | `chr()` | 编码 → 字符         | `chr(97) → 'a'` |
-3. math模块常用方法：先导入 (from math import 方法名) 后使用
+3. math模块常用方法：先导入 (import math 或 from math import 方法名) 后使用
     | 方法              | 说明                 | 示例                      |
     | --------------- | ------------------ | ----------------------- |
     | `math.ceil(x)`  | 向上取整 | `math.ceil(3.2)` → 4    |
     | `math.floor(x)` | 向下取整 | `math.floor(3.8)` → 3   |
     | `math.trunc(x)` | 截断小数部分（只保留整数部分）    | `math.trunc(-3.7)` → -3 |
+    | `math.sqrt(x)` | 平方根，相当于x**0.5    | `math.trunc(9)` → 3.0 |
 4. 正无穷：`float('inf')` 负无穷：`float('-inf')`
 
 
