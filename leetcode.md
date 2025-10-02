@@ -112,6 +112,97 @@ ll.reverse()        # 链表: 4 -> 3 -> 1 -> None
 ll.traverse()
 ```
 
+## 树 Tree
+### 二叉树基本结构定义
+```python
+class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+```
+### 二叉树的遍历方式
+1. 深度优先遍历（DFS）
+    - 前序遍历（Preorder）：根 → 左 → 右
+        ```python
+        def preorder(root):
+            if not root:
+                return []
+            return [root.val] + preorder(root.left) + preorder(root.right)
+        ```
+    - 中序遍历（Inorder）：左 → 根 → 右 （BST 中序遍历得到升序序列）
+        ```python
+        def inorder(root):
+            stack, res = [], []
+            cur = root
+            while cur or stack:
+                while cur:
+                    stack.append(cur)
+                    cur = cur.left
+                cur = stack.pop()
+                res.append(cur.val)
+                cur = cur.right
+            return res
+        ```
+    - 后序遍历（Postorder）：左 → 右 → 根
+        ```python
+        from collections import deque
+
+        def level_order(root):
+            if not root:
+                return []
+            q = deque([root])
+            res = []
+            while q:
+                node = q.popleft()
+                res.append(node.val)
+                if node.left:
+                    q.append(node.left)
+                if node.right:
+                    q.append(node.right)
+            return res
+        ```
+    - 递归实现最简单，也可用栈
+2. 广度优先遍历（BFS）
+    - 层序遍历（Level Order）：一层一层地访问（常用队列 collections.deque）
+        ```python
+        from collections import deque
+
+        def level_order(root):
+            if not root:
+                return []
+            res, queue = [], deque([root])
+            while queue:
+                level = []
+                for _ in range(len(queue)):
+                    node = queue.popleft()
+                    level.append(node.val)
+                    if node.left:
+                        queue.append(node.left)
+                    if node.right:
+                        queue.append(node.right)
+                res.append(level)
+            return res
+        ```
+### 最大深度
+```python
+def max_depth(root):
+    if not root:
+        return 0
+    return 1 + max(max_depth(root.left), max_depth(root.right))
+```
+### 搜索节点
+```python
+def search_bst(root, val):
+    if not root or root.val == val:
+        return root
+    if val < root.val:
+        return search_bst(root.left, val)
+    else:
+        return search_bst(root.right, val)
+```
+
 
 ## 堆 Heap
 **特点**：堆是一种特殊的完全二叉树结构，常用于优先队列，又分为
@@ -140,3 +231,104 @@ heapq.heappush(max_heap, -1)
 heapq.heappush(max_heap, -5)
 val = -heapq.heappop(max_heap) # val = 5
 ```
+
+## 哈希表 Hash Table
+**定义**：哈希表是一种通过 哈希函数 (Hash Function) 将 键（Key） 映射到 值（Value） 的数据结构<br>
+**常见应用**：
+1. 统计频率
+    ```python
+    from collections import Counter
+
+    nums = [1, 1, 2, 3, 3, 3]
+    cnt = Counter(nums)  # {1:2, 2:1, 3:3}
+    print(cnt[3])  # 3
+    ```
+2. defaultdict：和普通字典的区别是，访问不存在的键时，不会报错，而是自动创建一个默认值，默认值类型可以是int、list、set、str
+    ```python
+    d = defaultdict(list)
+    pairs = [("a", 1), ("a", 2), ("b", 3)]
+
+    for k, v in pairs:
+        d[k].append(v)
+
+    print(d)  # defaultdict(<class 'list'>, {'a': [1, 2], 'b': [3]})
+    ```
+
+# 算法思路
+## 排序
+1. 冒泡排序（Bubble Sort）：逐个交换，把最大的元素“冒泡”到最后
+    ```python
+    def bubble_sort(nums):
+        n = len(nums)
+        for i in range(n):
+            for j in range(0, n - i - 1):  # 每次比较到 n-i-1
+                if nums[j] > nums[j + 1]:
+                    nums[j], nums[j + 1] = nums[j + 1], nums[j]
+        return nums
+    ```
+2. 选择排序（Selection Sort）：每次选择最小的元素放到前面
+    ```python
+    def selection_sort(nums):
+        n = len(nums)
+        for i in range(n):
+            min_idx = i
+            for j in range(i+1, n):
+                if nums[j] < nums[min_idx]:
+                    min_idx = j
+            nums[i], nums[min_idx] = nums[min_idx], nums[i]
+        return nums
+    ```
+3. 插入排序（Insertion Sort）：逐个插入到合适位置
+    ```python
+    def insertion_sort(nums):
+        for i in range(1, len(nums)):
+            key = nums[i]
+            j = i - 1
+            while j >= 0 and nums[j] > key:
+                nums[j + 1] = nums[j]
+                j -= 1
+            nums[j + 1] = key
+        return nums
+    ```
+4. 归并排序（Merge Sort）：分治法：递归分成子数组再合并
+    ```python
+    def merge_sort(nums):
+        if len(nums) <= 1:
+            return nums
+        mid = len(nums) // 2
+        left = merge_sort(nums[:mid])
+        right = merge_sort(nums[mid:])
+        return merge(left, right)
+
+    def merge(left, right):
+        res, i, j = [], 0, 0
+        while i < len(left) and j < len(right):
+            if left[i] < right[j]:
+                res.append(left[i]); i += 1
+            else:
+                res.append(right[j]); j += 1
+        res.extend(left[i:])
+        res.extend(right[j:])
+        return res
+    ```
+5. 快速排序（Quick Sort）：选一个基准，把小的放左边，大的放右边
+```python
+def quick_sort(nums):
+    if len(nums) <= 1:
+        return nums
+    pivot = nums[len(nums)//2]
+    left = [x for x in nums if x < pivot]
+    mid = [x for x in nums if x == pivot]
+    right = [x for x in nums if x > pivot]
+    return quick_sort(left) + mid + quick_sort(right)
+```
+6. 堆排序（Heap Sort）：利用堆结构不断取最大/最小值
+```python
+import heapq
+
+def heap_sort(nums):
+    heapq.heapify(nums)   # 小根堆
+    res = [heapq.heappop(nums) for _ in range(len(nums))]
+    return res
+```
+
