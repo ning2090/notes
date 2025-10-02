@@ -312,23 +312,23 @@ val = -heapq.heappop(max_heap) # val = 5
         return res
     ```
 5. 快速排序（Quick Sort）：选一个基准，把小的放左边，大的放右边
-```python
-def quick_sort(nums):
-    if len(nums) <= 1:
-        return nums
-    pivot = nums[len(nums)//2]
-    left = [x for x in nums if x < pivot]
-    mid = [x for x in nums if x == pivot]
-    right = [x for x in nums if x > pivot]
-    return quick_sort(left) + mid + quick_sort(right)
-```
+    ```python
+    def quick_sort(nums):
+        if len(nums) <= 1:
+            return nums
+        pivot = nums[len(nums)//2]
+        left = [x for x in nums if x < pivot]
+        mid = [x for x in nums if x == pivot]
+        right = [x for x in nums if x > pivot]
+        return quick_sort(left) + mid + quick_sort(right)
+    ```
 6. 堆排序（Heap Sort）：利用堆结构不断取最大/最小值
-```python
-import heapq
+    ```python
+    import heapq
 
-def heap_sort(nums):
-    heapq.heapify(nums)   # 小根堆
-    res = [heapq.heappop(nums) for _ in range(len(nums))]
-    return res
-```
+    def heap_sort(nums):
+        heapq.heapify(nums)   # 小根堆
+        res = [heapq.heappop(nums) for _ in range(len(nums))]
+        return res
+    ```
 
