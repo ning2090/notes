@@ -332,3 +332,246 @@ val = -heapq.heappop(max_heap) # val = 5
         return res
     ```
 
+## 二分查找
+```python
+def binary_search(nums, target):
+    left, right = 0, len(nums) - 1
+    while left <= right:
+        mid = (left + right) // 2
+        if nums[mid] == target:
+            return mid
+        elif nums[mid] < target:
+            left = mid + 1
+        else:
+            right = mid - 1
+    return -1  # 没找到返回 -1
+```
+
+## 滑动窗口(双指针)
+```python
+# 长度最小的子数组（找到最短连续子数组，其和 ≥ target）
+def min_subarray_len(target, nums):
+    left = 0
+    total = 0
+    res = float('inf')
+
+    for right in range(len(nums)):
+        total += nums[right]
+
+        # 当条件满足时，尝试收缩左边界
+        while total >= target:
+            res = min(res, right - left + 1)
+            total -= nums[left]
+            left += 1
+
+    return 0 if res == float('inf') else res
+```
+
+## 贪心算法 Greedy Algorithm
+**思想**：每一步都采取当前最优选择（局部最优）的算法思想，希望通过这些局部最优解，最终得到全局最优解
+```python
+# 区间调度问题（最多不重叠区间）。思路：每次选择“结束时间最早”的区间，留下更多空间给后续区间
+def eraseOverlapIntervals(intervals):
+    intervals.sort(key=lambda x: x[1])  # 按结束时间排序
+    count = 0
+    end = float('-inf')
+
+    for i in intervals:
+        if i[0] >= end:  # 当前区间与前一个不重叠
+            end = i[1]
+            count += 1
+
+    return len(intervals) - count  # 需要移除的区间数
+```
+
+## 广度优先搜索 BFS
+```python
+# 最短路径
+from collections import deque
+
+def shortestPath(grid, start, end):
+    m, n = len(grid), len(grid[0])
+    sx, sy = start
+    ex, ey = end
+
+    # 四个方向：上、下、左、右
+    directions = [(-1,0), (1,0), (0,-1), (0,1)]
+
+    queue = deque([(sx, sy, 0)])  # (x, y, 距离)
+    visited = set([(sx, sy)])
+
+    while queue:
+        x, y, dist = queue.popleft()
+        
+        # 到达终点
+        if (x, y) == (ex, ey):
+            return dist
+
+        # 遍历四个方向
+        for dx, dy in directions:
+            nx, ny = x + dx, y + dy
+
+            # 判断边界和是否可走（假设1是障碍，0是可走）
+            if 0 <= nx < m and 0 <= ny < n and grid[nx][ny] == 0 and (nx, ny) not in visited:
+                visited.add((nx, ny))
+                queue.append((nx, ny, dist + 1))
+
+    return -1  # 若无法到达终点
+```
+
+## 深度优先搜索 DFS
+```python
+def dfs(grid, x, y, visited):
+    m, n = len(grid), len(grid[0])
+
+    # 边界条件：出界 或 已访问 或 障碍（假设1是障碍，0是可走）
+    if x < 0 or x >= m or y < 0 or y >= n or grid[x][y] == 1 or (x, y) in visited:
+        return
+
+    visited.add((x, y))  # 标记已访问
+
+    # 四个方向：上、下、左、右
+    directions = [(-1,0), (1,0), (0,-1), (0,1)]
+
+    for dx, dy in directions:
+        dfs(grid, x + dx, y + dy, visited)
+```
+案例 1：二维迷宫，打印出所有路径
+```python
+def allPaths(maze, start, end):
+    rows, cols = len(maze), len(maze[0])
+    res = []
+    path = []
+    visited = set()
+    directions = [(1,0), (-1,0), (0,1), (0,-1)]
+
+    def dfs(x, y):
+        path.append((x, y))
+        if (x, y) == end:
+            res.append(path[:])
+        else:
+            visited.add((x, y))
+            for dx, dy in directions:
+                nx, ny = x + dx, y + dy
+                if 0 <= nx < rows and 0 <= ny < cols and maze[nx][ny] == 0 and (nx, ny) not in visited:
+                    dfs(nx, ny)
+            visited.remove((x, y))  # 回溯
+        path.pop()
+
+    dfs(*start) # 参数解包语法。等价于dfs(start[0], start[1]) 
+    return res
+```
+案例 2：网格中的岛屿数量（经典 DFS 搜索连通块）
+```python
+def numIslands(grid):
+    if not grid:
+        return 0
+    rows, cols = len(grid), len(grid[0])
+    visited = set()
+
+    def dfs(r, c):
+        if (r < 0 or c < 0 or r >= rows or c >= cols or 
+            grid[r][c] == '0' or (r, c) in visited):
+            return
+        visited.add((r, c))
+        dfs(r + 1, c)
+        dfs(r - 1, c)
+        dfs(r, c + 1)
+        dfs(r, c - 1)
+
+    count = 0
+    for r in range(rows):
+        for c in range(cols):
+            if grid[r][c] == '1' and (r, c) not in visited:
+                dfs(r, c)
+                count += 1
+    return count
+
+
+grid = [
+    ["1","1","0","0","0"],
+    ["1","1","0","0","0"],
+    ["0","0","1","0","0"],
+    ["0","0","0","1","1"]
+]
+print(numIslands(grid))  # 输出 3
+```
+
+## 递归
+**概念**：函数在定义中直接或间接调用自身
+```python
+# 斐波那契数列（Fibonacci）
+def fib(n):
+    if n <= 1:
+        return n
+    return fib(n - 1) + fib(n - 2)
+
+print(fib(6))  # 输出：8
+```
+
+## 回溯
+**思想**：构建搜索树，探索所有可能解。在搜索过程中，如果发现当前路径不能得到正确解，就撤销（回溯），尝试其他可能。
+```python
+def backtrack(路径 path, 选择列表 options):
+    if 满足结束条件:
+        res.append(path的某种形式)
+        return
+
+    for option in options:
+        # 做选择
+        path.append(option)
+        # 递归进入下一层决策
+        backtrack(path, 更新后的 options)
+        # 撤销选择
+        path.pop()
+```
+案例 1：子集问题
+```python
+def subsets(nums):
+    res = []
+
+    def backtrack(start, path):
+        res.append(path[:])  # 每一步都记录子集
+        for i in range(start, len(nums)):
+            path.append(nums[i])
+            backtrack(i + 1, path)
+            path.pop()
+
+    backtrack(0, [])
+    return res
+```
+案例 2：全排列问题（给定一组不重复的数字，返回所有排列）
+```python
+def permute(nums):
+    res = []
+
+    def backtrack(path, used):
+        if len(path) == len(nums):
+            res.append(path[:])
+            return
+        for i in range(len(nums)):
+            if used[i]:
+                continue
+            path.append(nums[i])
+            used[i] = True
+            backtrack(path, used)
+            path.pop()
+            used[i] = False
+
+    backtrack([], [False]*len(nums))
+    return res
+```
+
+
+## 其他
+案例 1：获取所有子集
+```python
+def subsets_simple(nums):
+    res = [[]]  # 初始子集为空集
+    for num in nums:
+        res += [curr + [num] for curr in res]  # 每个已有子集加上 num 形成新子集
+    return res
+
+print(subsets_simple([1,2,3]))
+# 输出: [[], [1], [2], [1,2], [3], [1,3], [2,3], [1,2,3]]
+```
