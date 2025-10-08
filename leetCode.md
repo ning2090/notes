@@ -1,6 +1,7 @@
 # 数据结构
 ## 栈 Stack
 **特点**：在 Python 中，栈一般用 列表 list 来实现，遵循 *后进先出（LIFO）* 原则
+
 <img src="https://i-blog.csdnimg.cn/direct/adb97705f7e64b1da0e9139a16aa5be1.png#pic_center" width="450">
 
 **操作**：
@@ -13,6 +14,7 @@
 
 ## 队列 Queue
 **特点**：遵循 *先进先出（FIFO）* 原则
+
 <img src="https://i-blog.csdnimg.cn/direct/0f2c1fca83dd4c83afaa677eba88f1a6.png#pic_center" width="450">
 
 **实现**：`from collections import deque`<br>
@@ -562,6 +564,45 @@ def permute(nums):
     return res
 ```
 
+## 动态规划
+案例 1：一维 DP：爬楼梯问题（每次可以爬 1 或 2 个台阶，问共有多少种方法到达顶层）
+```python
+def climbStairs(n):
+    if n <= 2:
+        return n
+    dp = [0] * (n + 1)
+    dp[1], dp[2] = 1, 2
+    for i in range(3, n + 1):
+        dp[i] = dp[i-1] + dp[i-2]  # 状态转移方程
+    return dp[n]
+```
+
+案例 2：二维 DP：最小路径和（从左上角到右下角的最小路径和，只能向右或向下走）
+```python
+def minPathSum(grid):
+    m, n = len(grid), len(grid[0])
+    dp = [[0]*n for _ in range(m)]
+    dp[0][0] = grid[0][0]
+    for i in range(1, m):
+        dp[i][0] = dp[i-1][0] + grid[i][0]
+    for j in range(1, n):
+        dp[0][j] = dp[0][j-1] + grid[0][j]
+    for i in range(1, m):
+        for j in range(1, n):
+            dp[i][j] = grid[i][j] + min(dp[i-1][j], dp[i][j-1])
+    return dp[-1][-1]
+```
+
+案例 3：背包问题
+```python
+def knapsack(weights, values, W):
+    n = len(weights)
+    dp = [0] * (W + 1)
+    for i in range(n):
+        for j in range(W, weights[i] - 1, -1):
+            dp[j] = max(dp[j], dp[j - weights[i]] + values[i])
+    return dp[W]
+```
 
 ## 其他
 案例 1：获取所有子集
