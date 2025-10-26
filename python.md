@@ -43,16 +43,26 @@
         ```
 
 #### 字符串格式化
-- `%s` 字符串占位
+- 百分号（%）格式化
     ```python
     name = "wu"
     message = "hi %s" % name
     ```
-- `%d` 整数占位
-- `%f` 浮点数占位
-- `f"内容{变量}"` 不理会类型，不做精度控制
-
+    - `%s` 字符串占位
+    - `%d` 整数占位
+    - `%f` 浮点数占位
+- `f"内容{变量}"`
+    ```python
+    print(f"我叫{name}，今年{age}岁")
+    print(f"{pi:.2f}")
+    ```
+- `"{}".format(值)` 
+    ```python
+    print("我叫{}，今年{}岁".format(name, age))
+    print("圆周率约为：{:.2f}".format(3.1415926))
+    ```
 *注意：多个变量占位变量要用括号括起来，并按照占位顺序填入
+
 ##### 精度控制
 - m 控制数字宽度，设置得到宽度小于数字自身不生效，小数点和小数部分也算入宽度计算
 - .n 控制小数点精度，会四舍五入
@@ -192,6 +202,45 @@
 - float()
 - str()
 
+# 常用运算符
+| 分类        | 运算符      | 含义          | 示例                 | 结果             |
+| --------- | -------- | ----------- | ------------------ | -------------- |
+| **算术运算符** | `+` | 加法  | `3 + 2`  | `5`  | 
+|           | `-` | 减法| `5 - 2` | `3`|
+|           | `*` | 乘法   | `3 * 2` | `6` |
+|           | `/`| 除法（结果为浮点数） | `5 / 2` | `2.5`|
+|           | `//`  | 整除（向下取整）| `5 // 2`  | `2` |
+|           | `%`| 取余| `5 % 2` | `1` |
+|           | `**` | 幂运算 | `2 ** 3`  | `8` | 
+| **比较运算符** | `==`  | 等于 | `3 == 3`| `True`  |
+|           | `!=`| 不等于| `3 != 2` | `True` |
+|           | `>`| 大于  | `5 > 2` | `True` |
+|           | `<` | 小于  | `2 < 5` | `True`| 
+|           | `>=` | 大于等于 | `5 >= 5`| `True`  |
+|           | `<=`| 小于等于| `3 <= 4` | `True`|
+| **逻辑运算符** | `and` | 逻辑与| `True and False`| `False`|
+|           | `or`| 逻辑或| `True or False` | `True` |
+|           | `not`| 逻辑非 | `not True`| `False` |
+| **位运算符**  | `&` | 按位与<br>两个数的对应二进制位都为 1时结果为 1 | `5 & 3`  | `1` |
+|           | `  | 按位或  | `5  | 3` | `7` |
+|           | `^` | 按位异或<br>相同为 0，不同为 1 | `5 ^ 3` | `6` |
+|           | `~` | 按位取反<br>等价于 -(x + 1) | `~5`    | `-6` |
+|           | `<<`| 左移  | `2 << 1`  | `4` |
+|           | `>>` | 右移 | `4 >> 1`  | `2` |
+| **赋值运算符** | `=` | 赋值  | `x = 5`| `x 为 5` |
+|           | `+=` | 加后赋值  | `x += 2`    | `x = x + 2` |
+|           | `-=`  | 减后赋值 | `x -= 2` | `x = x - 2`|
+|           | `*=`| 乘后赋值  | `x *= 2`| `x = x * 2` |
+|           | `/=`| 除后赋值 | `x /= 2` | `x = x / 2` |
+|           | `//=` | 整除后赋值| `x //= 2`| `x = x // 2` |
+|           | `%=` | 取余后赋值 | `x %= 2` | `x = x % 2` |
+|           | `**=` | 幂后赋值 | `x **= 3` | `x = x ** 3` |
+| **成员运算符** | `in`| 元素是否在序列中| `'a' in 'cat'` | `True`  |
+|           | `not in` | 元素不在序列中| `'x' not in 'cat'` | `True`   |
+| **身份运算符** | `is` | 判断是否是同一个对象  | `a is b` | `True / False`|
+|           | `is not`| 判断是否不是同一个对象| `a is not b` | `True / False`|
+
+
 # 数据容器通用操作
 1. 内置函数:
     | 函数      | 功能              |
@@ -217,9 +266,8 @@
     result = map(str, nums)         # 把每个数字转成字符串
     print(list(result))             # ['1', '2', '3']
     ```
-6. 正无穷：`float('inf')` 负无穷：`float('-inf')`
-7. 字符串变成表达式并求值：`计算结果 = eval(str)`
-8. 进制转换：
+6. 字符串变成表达式并求值：`计算结果 = eval(str)`
+7. 进制转换：
     - `bin(x)` 十进制→二进制（前缀 `0b`）
     - `format(x, 'b')` 十进制→二进制，无前缀    
     - `oct(x)` 十进制→八进制（前缀 `0o`）
@@ -228,22 +276,6 @@
     - `format(x, 'x')` 十进制→十六进制（小写），无前缀
     - `format(x, 'X')` 十进制→十六进制（大写），无前缀
     - `int(s, base)` 字符串s → 十进制（`base` 可取 2/8/16/任意进制）
-9. 统计频率：collections.Counter 可以用来统计很多 可迭代对象 (iterable) 中元素出现的频率
-    ```python
-    from collections import Counter
-
-    # 字符串
-    s = "hello"
-    print(Counter(s)) # Counter({'l': 2, 'h': 1, 'e': 1, 'o': 1})
-
-    # 字典
-    d = {"a": 10, "b": 20, "c": 30, "a": 10}
-    # 值的频率
-    print(Counter(d.values())) # Counter({10: 2, 20: 1, 30: 1})
-    ```
-
-
-
 
 # 其他操作
 1. 将一个字符串列表中的元素拼接成一个字符串，中间用指定的字符连接
@@ -258,26 +290,91 @@ Unicode 是更大的国际标准，支持全球所有文字，Unicode 的前 128
     | ------- | --------------- | --------------- |
     | `ord()` | 字符 → Unicode 编码 | `ord('A') → 65` |
     | `chr()` | 编码 → 字符         | `chr(97) → 'a'` |
-3. math模块常用方法：先导入 (import math 或 from math import 方法名) 后使用
+3. 正无穷：`float('inf')` 负无穷：`float('-inf')`
+
+# 常用标准库
+1. math模块：先导入 (import math 或 from math import 方法名) 后使用
     | 方法              | 说明                 | 示例                      |
     | --------------- | ------------------ | ----------------------- |
     | `math.ceil(x)`  | 向上取整 | `math.ceil(3.2)` → 4    |
     | `math.floor(x)` | 向下取整 | `math.floor(3.8)` → 3   |
     | `math.trunc(x)` | 截断小数部分（只保留整数部分）    | `math.trunc(-3.7)` → -3 |
-    | `math.sqrt(x)` | 平方根，相当于x**0.5    | `math.trunc(9)` → 3.0 |
-4. 正无穷：`float('inf')` 负无穷：`float('-inf')`
+    | `math.sqrt(x)` | 平方根，相当于x**0.5    | `math.sqrt(9)` → 3.0 |
+2. collections模块
+    - defaultdict带默认值的字典，避免 KeyError `d = defaultdict(list)`
+        ```python
+        from collections import defaultdict
+        d = defaultdict(list)
+        ```
+    - deque双端队列
+        ```python
+        from collections import deque
+        dq = deque([1, 2, 3])
+        dq.appendleft(0)
+        dq.popleft(0)
+        ```
+    - Counter统计频率：用来统计很多 可迭代对象 (iterable) 中元素出现的频率
+        ```python
+        from collections import Counter
 
+        # 字符串
+        s = "hello"
+        print(Counter(s)) # Counter({'l': 2, 'h': 1, 'e': 1, 'o': 1})
 
-# 算术运算符
-| 运算符 | 名称       | 
-|--------|------------|
-| +    | 加法       | 
-| -    | 减法       | 
-| *   | 乘法       | 
-| /    | 除法       | 
-| //   | 整除       | 
-| %   | 取余（模） | 
-| **   | 幂运算     | 
+        # 字典
+        d = {"a": 10, "b": 20, "c": 30, "a": 10}
+        # 值的频率
+        print(Counter(d.values())) # Counter({10: 2, 20: 1, 30: 1})
+        ```
+3. heapq模块
+    ```python
+    import heapq
+
+    nums = [5, 1, 3, 2, 4]
+    # 最小堆
+    heapq.heapify(nums) # [1, 2, 3, 5, 4] （最小值在堆顶，其它元素不一定完全有序）
+    heapq.heappush(nums, 0) # [0, 1, 2, 3, 5, 4]
+    min_val = heapq.heappop(nums) # min_val = 0
+
+    # 最大堆，可以通过取负数实现
+    max_heap = [] 
+    heapq.heappush(max_heap, -3) 
+    heapq.heappush(max_heap, -1) 
+    heapq.heappush(max_heap, -5)
+    val = -heapq.heappop(max_heap) # val = 5
+    ```
+4. itertools模块
+    - permutations生成一个序列的所有排列（顺序不同算不同排列）
+        ```python
+        from itertools import permutations
+
+        data = [1, 2, 3]
+        perm_all = list(permutations(data))
+        print(perm_all) # [(1, 2, 3), (1, 3, 2), (2, 1, 3), (2, 3, 1), (3, 1, 2), (3, 2, 1)]
+        ```
+    - combinations生成一个序列的组合（顺序不同算同一个组合）
+        ```python
+        from itertools import combinations
+
+        data = [1, 2, 3]
+
+        # 生成长度为2的组合
+        comb_2 = list(combinations(data, 2))
+        print(comb_2)
+        # 输出: [(1, 2), (1, 3), (2, 3)]
+
+        # 生成所有组合
+        comb = [list(c) for r in range(1, len(data)+1) for c in combinations(data, r)]
+        print(comb) # [[1], [2], [3], [1, 2], [1, 3], [2, 3], [1, 2, 3]]
+        ```
+5. functools模块
+    - reduce依次累计计算
+        ```python
+        from functools import reduce
+        nums = [1, 2, 3, 4]
+        res = reduce(lambda x, y: x + y, nums)
+        print(res)  # 输出 10
+        ```
 
 # 流程控制语句
 ## if语句
