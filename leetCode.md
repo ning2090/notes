@@ -604,6 +604,79 @@ def knapsack(weights, values, W):
     return dp[W]
 ```
 
+## 最小生成树（MST, Minimum Spanning Tree）
+常见题目：有 N 个城市和 M 条候选道路，每条道路有修建成本，问连接所有城市的最小花费
+### Kruskal算法（适合稀疏图）
+```python
+class UnionFind:
+    def __init__(self, n):
+        self.parent = list(range(n))
+
+    def find(self, x):
+        if self.parent[x] != x:
+            self.parent[x] = self.find(self.parent[x])
+        return self.parent[x]
+
+    def union(self, x, y):
+        px, py = self.find(x), self.find(y)
+        if px == py:
+            return False
+        self.parent[py] = px
+        return True
+
+
+def kruskal(n, edges):
+    """
+    n: 节点个数
+    edges: 边列表 [ (u, v, w), ... ]，w是权值
+    返回最小生成树的总权值
+    """
+    uf = UnionFind(n)
+    mst_weight = 0
+    edge_count = 0
+
+    # 按权值从小到大排序
+    edges.sort(key=lambda x: x[2])
+
+    # 遍历边，若不成环就加入
+    for u, v, w in edges:
+        if uf.union(u, v):
+            mst_weight += w
+            edge_count += 1
+            if edge_count == n - 1:  # 已生成 n-1 条边
+                break
+
+    return mst_weight
+```
+
+### Prim算法（适合稠密图）
+```python
+import heapq
+
+def prim(n, graph):
+    """
+    n: 节点个数
+    graph: 邻接表 {u: [(v, w), ...], ...}
+    返回最小生成树的总权值
+    """
+    visited = [False] * n
+    min_heap = [(0, 0)]  # (权值, 节点)
+    total_weight = 0
+
+    while min_heap:
+        w, u = heapq.heappop(min_heap)
+        if visited[u]:
+            continue
+        visited[u] = True
+        total_weight += w
+
+        for v, w2 in graph[u]:
+            if not visited[v]:
+                heapq.heappush(min_heap, (w2, v))
+
+    return total_weight
+```
+
 ## 其他
 案例 1：获取所有子集
 ```python
