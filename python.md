@@ -381,6 +381,33 @@ Unicode 是更大的国际标准，支持全球所有文字，Unicode 的前 128
         res = reduce(lambda x, y: x + y, nums)
         print(res)  # 输出 10
         ```
+6. random模块
+    ```python
+    import random
+
+    # 生成 a ≤ N ≤ b 随机整数 random.randint(a, b) 
+    random.randint(1, 10)
+
+    # 生成 [0.0, 1.0) 之间随机浮点数 random.random() 
+    random.random()
+
+    # 生成 [a, b] 间的随机浮点数 random.uniform(a, b)
+    random.uniform(1.5, 3.5)
+
+    # 从序列中随机选取一个元素 random.choice(seq)
+    random.choice([1,2,3])
+    random.choice("abc")
+
+    # 从序列中随机选取多个元素（可重复） random.choices(seq, k=n)
+    random.choices([1, 2, 3], k=5)
+
+    # 从序列中随机选取多个元素（不重复） random.sample(seq, k=n)
+    random.sample([1,2,3,4], k=2)
+
+    # 打乱列表顺序（修改原列表）
+    lst = [1,2,3,4]
+    random.shuffle(lst)
+    ```
 
 # 流程控制语句
 ## if语句
