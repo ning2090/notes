@@ -266,8 +266,14 @@
     result = map(str, nums)         # 把每个数字转成字符串
     print(list(result))             # ['1', '2', '3']
     ```
-6. 字符串变成表达式并求值：`计算结果 = eval(str)`
-7. 进制转换：
+6. 过滤 filter(function, iterable)
+    ```python
+        nums = [1, 2, 3, 4, 5, 6]
+        result = filter(lambda x: x % 2 == 0, nums)
+        print(list(result))  # [2, 4, 6]
+    ```
+7. 字符串变成表达式并求值：`计算结果 = eval(str)`
+8. 进制转换：
     - `bin(x)` 十进制→二进制（前缀 `0b`）
     - `format(x, 'b')` 十进制→二进制，无前缀    
     - `oct(x)` 十进制→八进制（前缀 `0o`）
