@@ -282,6 +282,19 @@
     - `format(x, 'x')` 十进制→十六进制（小写），无前缀
     - `format(x, 'X')` 十进制→十六进制（大写），无前缀
     - `int(s, base)` 字符串s → 十进制（`base` 可取 2/8/16/任意进制）
+9. 拷贝 (常用于 list、dict、set 等可变对象)
+    ```python
+    # 浅拷贝 .copy()
+    a = [1, 2, 3]
+    b = a.copy()
+    print(b)  # [1, 2, 3]
+
+    # 深拷贝 copy.deepcopy()
+    import copy
+    a = [[1, 2], [3, 4]]
+    b = copy.deepcopy(a)
+    ```
+
 
 # 其他操作
 1. 将一个字符串列表中的元素拼接成一个字符串，中间用指定的字符连接
